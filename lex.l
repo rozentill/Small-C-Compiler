@@ -31,8 +31,10 @@ if if
 else else 
 break break
 cont continue
-for for 
-
+for for
+ 
+delium [" "\t\n]
+whitespace {delium}+ 
 %%
 {type} {return TYPE;}
 {lp} {return LP;}
@@ -57,7 +59,7 @@ for for
 {assignop} {return ASSIGNOP;}
 {id} {return ID;}
 {int} {return INT;}
-
+{whitespace} {;}
 %%
 void main(){
 
