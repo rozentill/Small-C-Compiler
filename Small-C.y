@@ -1,7 +1,8 @@
-%
-
-
+%{
+typedef char* string
+#define YYSTYPE string
 %}
+
 %token TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE BREAK CONT FOR SEMI COMMA DOT BINARYOP UNARYOP SUB ASSIGNOP ID INT
 
 %%
@@ -11,7 +12,7 @@ EXTDEFS :EXTDEF EXTDEFS
 	|EMPTY
 	;
 EXTDEF  :SPEC EXTVARS SEMI
-	|SPEC FUNC STMEBLOCK
+	|SPEC FUNC STMTBLOCK
 	;
 EXTVARS :DEC
 	|DEC COMMA EXTVARS
@@ -82,4 +83,14 @@ ARRS	:LB EXP RB ARRS
 ARGS	:EXP COMMA ARGS
 	|EXP
 	;
+EMPTY	:
+	;
 %%
+int main(){
+	yyparese();
+	return 0;
+}
+int yyerror(char * msg){
+	printf("%s.\n",msg);
+}
+
