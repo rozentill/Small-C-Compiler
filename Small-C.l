@@ -1,7 +1,7 @@
 %{
 #include<stdio.h>
 #include<string.h>
-//#include<y.tab.h>
+#include"y.tab.h"
 int linecount=1;
 %}
 digit [0-9]
@@ -14,10 +14,12 @@ int digits|((0x|0X|0)digits)
 id (underscore|letter)(underscore|letter|digit)*
 semi ";"
 comma ","
+string \"[^\"]*\"
+
 
 dot "."
-binaryop "+"|"*"|"/"|"%"|">"|"<"|">="|"<="|"=="|"!="|"&"|"^"|"|"|"&&"|"||"|"+="|"-="|"*="|"/="|"&="|"^="|"|="|"<<="|">>="
-unaryop "++"|"--"|">>"|"<<"|"!"|"~"
+binaryop "+"|"*"|"/"|"%"|">"|"<"|">="|"<="|"=="|"!="|"&"|"^"|"|"|"&&"|"||"|">>"|"<<"|"+="|"-="|"*="|"/="|"&="|"^="|"|="|"<<="|">>="
+unaryop "++"|"--"|"!"|"~"
 sub "-"
 
 assignop "="
@@ -68,9 +70,10 @@ end [ \t]+$
 {end} {;}
 . {yyerror("Error!");}  
 %%
-void main(){
-
+int main(int argc,char * argv[]){
 	yylex();
+	fflush(yyout);
+	exit(0);
 }
 int yywrap(){
 	return 1;

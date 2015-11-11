@@ -1,10 +1,13 @@
 %{
-typedef char* string
-#define YYSTYPE string
+
+//typedef char* string
+//#define YYSTYPE string
 %}
-
+%start PROGRAM
 %token TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE BREAK CONT FOR SEMI COMMA DOT BINARYOP UNARYOP SUB ASSIGNOP ID INT
-
+%
+%right UNARYOP
+%left LP RP LB RB DOT 
 %%
 PROGRAM :EXTDEFS
 	;
