@@ -42,18 +42,18 @@ delium [" "\t]
 whitespace {delium}+ 
 end [ \t]+$
 %%
-{type} {printf("TYPE.\n");return TYPE;}
-{lp} {printf("LP.\n");return LP;}
-{rp} {printf("RP.\n");return RP;}
-{lb} {printf("LB.\n");return LB;}
-{rb} {printf("RB.\n");return RB;}
-{lc} {printf("LC.\n");return LC;}
-{rc} {printf("RC.\n");return RC;}
-{struct} {printf("STRUCT.\n");return STRUCT;}
-{return} {printf("RETURN.\n");return RETURN;}
-{if} {printf("IF.\n");return IF;}
-{else} {printf("ELSE.\n");return ELSE;}
-{break} {printf("BREAK.\n");return BREAK;}
+{type} {return TYPE;}
+{lp} {return LP;}
+{rp} {return RP;}
+{lb} {return LB;}
+{rb} {return RB;}
+{lc} {return LC;}
+{rc} {return RC;}
+{struct} {return STRUCT;}
+{return} {return RETURN;}
+{if} {return IF;}
+{else} {return ELSE;}
+{break} {return BREAK;}
 {cont} {return CONT;}
 {for} {return FOR;}
 {semi} {return SEMI;}
