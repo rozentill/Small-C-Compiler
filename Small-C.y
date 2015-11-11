@@ -5,7 +5,18 @@
 %}
 %start PROGRAM
 %token TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE BREAK CONT FOR SEMI COMMA DOT BINARYOP UNARYOP SUB ASSIGNOP ID INT
-%
+
+%right ASSIGNOP 
+%left BOP10
+%left BOP9
+%left BOP8
+%left BOP7
+%left BOP6
+%left BOP5
+%left BOP4
+%left BOP3
+%left BOP2
+%left BOP1
 %right UNARYOP
 %left LP RP LB RB DOT 
 %%
