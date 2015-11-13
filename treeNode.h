@@ -2,10 +2,10 @@
 #define TREENODE_H
 #include<stdio.h>
 
-typedef struct Node{
+typedef struct treeNode{
 	char * data;
 	int childrenNum;
-	struct Node ** children;
+	struct treeNode ** children;
 } Node; 
 
 #endif

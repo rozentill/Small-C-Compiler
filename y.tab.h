@@ -45,13 +45,13 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TYPE = 258,
-    LP = 259,
-    RP = 260,
-    LB = 261,
-    RB = 262,
-    LC = 263,
-    RC = 264,
+    SEMI = 258,
+    COMMA = 259,
+    LC = 260,
+    RC = 261,
+    INT = 262,
+    ID = 263,
+    TYPE = 264,
     STRUCT = 265,
     RETURN = 266,
     IF = 267,
@@ -59,33 +59,33 @@ extern int yydebug;
     BREAK = 269,
     CONT = 270,
     FOR = 271,
-    SEMI = 272,
-    COMMA = 273,
-    DOT = 274,
-    UNARYOP = 275,
-    ASSIGNOP = 276,
-    ID = 277,
-    INT = 278,
-    BOP1 = 279,
-    BOP2 = 280,
-    BOP3 = 281,
-    BOP4 = 282,
-    BOP5 = 283,
-    BOP6 = 284,
-    BOP7 = 285,
-    BOP8 = 286,
-    BOP9 = 287,
-    BOP10 = 288
+    ASSIGNOP = 272,
+    BOP10 = 273,
+    BOP9 = 274,
+    BOP8 = 275,
+    BOP7 = 276,
+    BOP6 = 277,
+    BOP5 = 278,
+    BOP4 = 279,
+    BOP3 = 280,
+    BOP2 = 281,
+    BOP1 = 282,
+    UNARYOP = 283,
+    LP = 284,
+    RP = 285,
+    LB = 286,
+    RB = 287,
+    DOT = 288
   };
 #endif
 /* Tokens.  */
-#define TYPE 258
-#define LP 259
-#define RP 260
-#define LB 261
-#define RB 262
-#define LC 263
-#define RC 264
+#define SEMI 258
+#define COMMA 259
+#define LC 260
+#define RC 261
+#define INT 262
+#define ID 263
+#define TYPE 264
 #define STRUCT 265
 #define RETURN 266
 #define IF 267
@@ -93,37 +93,39 @@ extern int yydebug;
 #define BREAK 269
 #define CONT 270
 #define FOR 271
-#define SEMI 272
-#define COMMA 273
-#define DOT 274
-#define UNARYOP 275
-#define ASSIGNOP 276
-#define ID 277
-#define INT 278
-#define BOP1 279
-#define BOP2 280
-#define BOP3 281
-#define BOP4 282
-#define BOP5 283
-#define BOP6 284
-#define BOP7 285
-#define BOP8 286
-#define BOP9 287
-#define BOP10 288
+#define ASSIGNOP 272
+#define BOP10 273
+#define BOP9 274
+#define BOP8 275
+#define BOP7 276
+#define BOP6 277
+#define BOP5 278
+#define BOP4 279
+#define BOP3 280
+#define BOP2 281
+#define BOP1 282
+#define UNARYOP 283
+#define LP 284
+#define RP 285
+#define LB 286
+#define RB 287
+#define DOT 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 28 "Small-C.y" /* yacc.c:1909  */
+#line 10 "Small-C.y" /* yacc.c:1909  */
 
-	int iValue;
-	char sIndex;
-	
-	//Node * node;
+        char *  sValue;
+        int iPunctuation;
+	char * sIndex;
+        char * sString;
+	char * sOperator;
+	struct treeNode * nNode;
 
-#line 127 "y.tab.h" /* yacc.c:1909  */
+#line 129 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
