@@ -1,10 +1,15 @@
 %{
+#include <stdio.h>
+//#include <string.h>
+#include <stdlib.h>
+#include <stdarg.h>
+//#include <ctype.h>
+#include "treeNode.h"
 
-//typedef char* string
-//#define YYSTYPE string
 %}
-%start PROGRAM
-%token TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE BREAK CONT FOR SEMI COMMA DOT BINARYOP UNARYOP SUB ASSIGNOP ID INT
+%start program
+%token TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE BREAK CONT FOR SEMI COMMA DOT UNARYOP ASSIGNOP ID INT
+%token BOP1 BOP2 BOP3 BOP4 BOP5 BOP6 BOP7 BOP8 BOP9 BOP10
 
 %right ASSIGNOP 
 %left BOP10
@@ -19,89 +24,119 @@
 %left BOP1
 %right UNARYOP
 %left LP RP LB RB DOT 
+
+%union {
+	int iValue;
+	char sIndex;
+	
+	//Node * node;
+};
+
 %%
-PROGRAM :EXTDEFS
+program :extdefs
 	;
-EXTDEFS :EXTDEF EXTDEFS
-	|EMPTY
+extdefs :extdef extdefs
+	|
 	;
-EXTDEF  :SPEC EXTVARS SEMI
-	|SPEC FUNC STMTBLOCK
+extdef  :spec extvars SEMI
+	|spec func stmtblock
 	;
-EXTVARS :DEC
-	|DEC COMMA EXTVARS
-	|EMPTY
+extvars :dec
+	|dec COMMA extvars
+	|
 	;
-SPEC    :TYPE
-	|STSPEC
+spec    :TYPE
+	|stspec
 	;
-STSPEC  :STRUCT OPTTAG LC DEFS RC
+stspec  :STRUCT opttag LC defs RC
 	|STRUCT ID
 	;
-OPTTAG  :ID
-	|EMPTY
+opttag  :ID
+	|
 	;
-VAR 	:ID
-	|VAR LB INT RB
+var 	:ID
+	|var LB INT RB
 	;
-FUNC    :ID LP PARAS RP 
+func    :ID LP paras RP 
 	;
-PARAS   :PARA COMMA PARAS
-	|PARA
-	|EMPTY
+paras   :para COMMA paras
+	|para
+	|
 	;
-PARA    :SPEC VAR
+para    :spec var
 	;
-STMTBLOCK:LC DEFS STMTS RC
+stmtblock:LC defs stmts RC
 	;
-STMTS   :STMT STMTS
-	|EMPTY
+stmts   :stmt stmts
+	|
 	;
-STMT    :EXP SEMI
-	|STMTBLOCK
-	|RETURN EXP SEMI
-	|IF LP EXP RP STMT ESTMT
-	|FOR LP EXP SEMI EXP SEMI EXP RP STMT
+stmt    :exp SEMI
+	|stmtblock
+	|RETURN exp SEMI
+	|IF LP exps RP stmt estmt
+	|FOR LP exp SEMI exp SEMI exp RP stmt
 	|CONT SEMI
 	|BREAK SEMI
 	;
-ESTMT   :ELSE STMT
-	|EMPTY{}
+estmt   :ELSE stmt
+	|{}
 	;
-DEFS    :DEF DEFS{}
-	|EMPTY{}
+defs    :def defs{}
+	|{}
 	;
-DEF 	:SPEC DECS SEMI{}
+def 	:spec decs SEMI{}
 	;
-DECS	:DEC COMMA DECS{}
-	|DEC{}
+decs	:dec COMMA decs{}
+	|dec{}
 	;
-DEC 	:VAR{}
-	|VAR ASSIGNOP INIT{}
+dec 	:var{}
+	|var ASSIGNOP init{}
 	;
-INIT	:EXP{}
-	|LC ARGS RC{}
+init	:exp{}
+	|LC args RC{}
 	;
-EXP	:EXP BINARYOP EXP{}
-	|UNARYOP EXP{}
-	|LP EXP RP{}
-	|ID LP ARGS RP{}
-	|ID ARRS{}
-	|EXP DOT ID{}
+exp	:exps
+	|
+	;
+exps	:exp BOP1 exp{}
+	|exp BOP2 exp{}
+	|exp BOP3 exp{}
+	|exp BOP4 exp{}
+	|exp BOP5 exp{}
+	|exp BOP6 exp{}
+	|exp BOP7 exp
+	|exp BOP8 exp
+	|exp BOP9 exp
+	|exp BOP10 exp
+	|UNARYOP exp{}
+	|LP exp RP{}
+	|ID LP args RP{}
+	|ID arrs{}
+	|exp DOT ID{}
 	|INT{}
-	|EMPTY{}
 	;
-ARRS	:LB EXP RB ARRS{}
-	|EMPTY{}
+arrs	:LB exp RB arrs{}
+	|{}
 	;
-ARGS	:EXP COMMA ARGS{}
-	|EXP{}
-	;
-EMPTY	:
+args	:exp COMMA args{}
+	|exp{}
 	;
 %%
-int main(){
-	yyparese();
+Node * newNode(int size,Node*child,...){
+	Node * temp;
+	va_list marker;
+	va_start(marker,child);
+	va_end(marker);
+	return temp;
+}
+int main(int argc,char * argv[]){
+	FILE * in;
+	FILE * out;
+	in = freopen(argv[1],"r",stdin);
+	out = freopen(argv[2],"w",stdout); 
+	yyparse();
+	fclose(in);
+	fclose(out);
 	return 0;
 }
 int yyerror(char * msg){
