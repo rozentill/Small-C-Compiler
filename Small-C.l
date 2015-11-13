@@ -53,21 +53,21 @@ delium [ \t\v\f]
 whitespace {delium}+ 
 end [ \t]+$
 %%
-{type} {printf(":%s",yytext);return TYPE;}
-{lp} {printf(":%s",yytext);return LP;}
-{rp} {printf(":%s",yytext);return RP;}
+{type} {return TYPE;}
+{lp} {return LP;}
+{rp} {return RP;}
 {lb} {return LB;}
 {rb} {return RB;}
-{lc} {printf(":%s",yytext);return LC;}
-{rc} {printf(":%s",yytext);return RC;}
+{lc} {return LC;}
+{rc} {return RC;}
 {struct} {return STRUCT;}
-{return} {printf(":%s",yytext);return RETURN;}
+{return} {return RETURN;}
 {if} {return IF;}
 {else} {return ELSE;}
 {break} {return BREAK;}
 {cont} {return CONT;}
 {for} {return FOR;}
-{semi} {printf(":%s",yytext);return SEMI;}
+{semi} {return SEMI;}
 {comma} {return COMMA;}
 {dot} {return DOT;}
 {bop1} {return BOP1;}
@@ -82,12 +82,10 @@ end [ \t]+$
 {bop10} {return BOP10;}
 {unaryop} {return UNARYOP;}
 {assignop} {return ASSIGNOP;}
-{id} {printf(":%s",yytext);return ID;}
-{int} {printf(":%s",yytext);//sscanf(yytext,"%d",&yylval);
-	return INT;}
+{id} {return ID;}
+{int} {return INT;}
 {whitespace} {;}
 {newline} {linecount++;}
-. {printf(":%s",yytext);}
 {end} {;}
 %%
 

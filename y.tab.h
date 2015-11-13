@@ -116,7 +116,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 10 "Small-C.y" /* yacc.c:1909  */
+#line 15 "Small-C.y" /* yacc.c:1909  */
 
         char *  sValue;
         int iPunctuation;
