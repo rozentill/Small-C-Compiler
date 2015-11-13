@@ -13,8 +13,8 @@ letter [a-zA-Z]
 letters {letter}+
 underscore "_"
 
-int digits|((0x|0X|0)digits)
-id (underscore|letter)+(underscore|letter|digit)*
+int {digits}|(0[0-7]+)|((0x|0X)[0-9a-fA-F]+)
+id ({underscore}|{letter})+({underscore}|{letter}|{digit})*
 semi ";"
 comma ","
 string \"[^\"]*\"
