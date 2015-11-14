@@ -1,4 +1,5 @@
 # Small-C-Compiler
-<p>Project of Compiler Principles in SJTU.</p>
-<p>The language is Small-C ,which is similar to C language.</p>
-<p>Now the front end part is under coding...</p>
+<p>All the files contain:Small.l,Small.y,treeNode.h,README.md,makefile,testcases</p>
+## How to run :
+<p>Firstly,input "make" in the shell</p>
+<p>Secondly , ./Parser "Source File Name" "Output File Name"</p>
