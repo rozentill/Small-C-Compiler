@@ -20,8 +20,9 @@ comma ","
 string \"[^\"]*\"
 
 dot "."
+sub "-"
 bop1 "*"|"/"|"%"
-bop2 "+"|"-"
+bop2 "+"
 bop3 "<<"|">>"
 bop4 ">"|"<"|">="|"<="
 bop5 "=="|"!="
@@ -30,7 +31,7 @@ bop7 "^"
 bop8 "|"
 bop9 "&&"
 bop10 "||"
-unaryop "++"|"--"|"!"|"~"|"-"
+unaryop "++"|"--"|"!"|"~"
 
 
 assignop "="|"+="|"-="|"*="|"/="|"&="|"^="|"|="|"<<="|">>="
@@ -70,6 +71,7 @@ end [ \t]+$
 {semi} {return SEMI;}
 {comma} {return COMMA;}
 {dot} {return DOT;}
+{sub} {yylval.sOperator=strdup(yytext);return SUB;}
 {bop1} {yylval.sOperator=strdup(yytext);return BOP1;}
 {bop2} {yylval.sOperator=strdup(yytext);return BOP2;}
 {bop3} {yylval.sOperator=strdup(yytext);return BOP3;}

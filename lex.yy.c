@@ -368,8 +368,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 35
-#define YY_END_OF_BUFFER 36
+#define YY_NUM_RULES 36
+#define YY_END_OF_BUFFER 37
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -379,15 +379,15 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[87] =
     {   0,
-        0,    0,   36,   35,   32,   33,   32,   28,   18,   23,
-        2,    3,   18,   19,   16,   19,   17,   18,   31,   31,
-       15,   21,   29,   21,   30,    4,    5,   24,   30,   30,
-       30,   30,   30,   30,   30,    6,   25,    7,   28,   32,
-       34,   32,   22,   26,   29,   28,   31,   31,    0,   20,
-       21,   20,   30,   30,   30,   30,   30,   30,   10,   30,
-       30,   30,   27,   31,   30,   30,   30,   14,    1,   30,
-       30,   30,   30,   11,   30,   30,   12,   30,   30,   30,
-       30,    9,    8,   30,   13,    0
+        0,    0,   37,   36,   33,   34,   33,   29,   19,   24,
+        2,    3,   19,   20,   16,   18,   17,   19,   32,   32,
+       15,   22,   30,   22,   31,    4,    5,   25,   31,   31,
+       31,   31,   31,   31,   31,    6,   26,    7,   29,   33,
+       35,   33,   23,   27,   30,   29,   32,   32,    0,   21,
+       22,   21,   31,   31,   31,   31,   31,   31,   10,   31,
+       31,   31,   28,   32,   31,   31,   31,   14,    1,   31,
+       31,   31,   31,   11,   31,   31,   12,   31,   31,   31,
+       31,    9,    8,   31,   13,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -731,7 +731,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 55 "Small-C.l"
+#line 56 "Small-C.l"
 
 #line 737 "lex.yy.c"
 
@@ -818,184 +818,189 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 56 "Small-C.l"
+#line 57 "Small-C.l"
 {return TYPE;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 57 "Small-C.l"
+#line 58 "Small-C.l"
 {return LP;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 58 "Small-C.l"
+#line 59 "Small-C.l"
 {return RP;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 59 "Small-C.l"
+#line 60 "Small-C.l"
 {return LB;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 60 "Small-C.l"
+#line 61 "Small-C.l"
 {return RB;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 61 "Small-C.l"
+#line 62 "Small-C.l"
 {return LC;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 62 "Small-C.l"
+#line 63 "Small-C.l"
 {return RC;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 63 "Small-C.l"
+#line 64 "Small-C.l"
 {return STRUCT;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 64 "Small-C.l"
+#line 65 "Small-C.l"
 {return RETURN;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 65 "Small-C.l"
+#line 66 "Small-C.l"
 {return IF;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 66 "Small-C.l"
+#line 67 "Small-C.l"
 {return ELSE;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 67 "Small-C.l"
+#line 68 "Small-C.l"
 {return BREAK;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 68 "Small-C.l"
+#line 69 "Small-C.l"
 {return CONT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 69 "Small-C.l"
+#line 70 "Small-C.l"
 {return FOR;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 70 "Small-C.l"
+#line 71 "Small-C.l"
 {return SEMI;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 71 "Small-C.l"
+#line 72 "Small-C.l"
 {return COMMA;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 72 "Small-C.l"
+#line 73 "Small-C.l"
 {return DOT;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 73 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP1;}
+#line 74 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return SUB;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 74 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP2;}
+#line 75 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP1;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 75 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP3;}
+#line 76 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP2;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 76 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP4;}
+#line 77 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP3;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 77 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP5;}
+#line 78 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP4;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 78 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP6;}
+#line 79 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP5;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 79 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP7;}
+#line 80 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP6;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 80 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP8;}
+#line 81 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP7;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 81 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP9;}
+#line 82 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP8;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 82 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return BOP10;}
+#line 83 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP9;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 83 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return UNARYOP;}
+#line 84 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return BOP10;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 84 "Small-C.l"
-{yylval.sOperator=strdup(yytext);return ASSIGNOP;}
+#line 85 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return UNARYOP;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 85 "Small-C.l"
-{yylval.sIndex=strdup(yytext);return ID;}
+#line 86 "Small-C.l"
+{yylval.sOperator=strdup(yytext);return ASSIGNOP;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 86 "Small-C.l"
-{yylval.sValue=strdup(yytext);return INT;}
+#line 87 "Small-C.l"
+{yylval.sIndex=strdup(yytext);return ID;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 87 "Small-C.l"
-{;}
+#line 88 "Small-C.l"
+{yylval.sValue=strdup(yytext);return INT;}
 	YY_BREAK
 case 33:
-/* rule 33 can match eol */
-YY_RULE_SETUP
-#line 88 "Small-C.l"
-{linecount++;}
-	YY_BREAK
-case 34:
-*yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
-(yy_c_buf_p) = yy_cp -= 1;
-YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 #line 89 "Small-C.l"
 {;}
 	YY_BREAK
-case 35:
+case 34:
+/* rule 34 can match eol */
 YY_RULE_SETUP
 #line 90 "Small-C.l"
+{linecount++;}
+	YY_BREAK
+case 35:
+*yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
+(yy_c_buf_p) = yy_cp -= 1;
+YY_DO_BEFORE_ACTION; /* set up yytext again */
+YY_RULE_SETUP
+#line 91 "Small-C.l"
+{;}
+	YY_BREAK
+case 36:
+YY_RULE_SETUP
+#line 92 "Small-C.l"
 ECHO;
 	YY_BREAK
-#line 999 "lex.yy.c"
+#line 1004 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1993,7 +1998,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 90 "Small-C.l"
+#line 92 "Small-C.l"
 
 
 

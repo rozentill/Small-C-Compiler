@@ -69,13 +69,15 @@ extern int yydebug;
     BOP4 = 279,
     BOP3 = 280,
     BOP2 = 281,
-    BOP1 = 282,
-    UNARYOP = 283,
-    LP = 284,
-    RP = 285,
-    LB = 286,
-    RB = 287,
-    DOT = 288
+    SUB = 282,
+    BOP1 = 283,
+    UNARYOP = 284,
+    UMINUS = 285,
+    LP = 286,
+    RP = 287,
+    LB = 288,
+    RB = 289,
+    DOT = 290
   };
 #endif
 /* Tokens.  */
@@ -103,13 +105,15 @@ extern int yydebug;
 #define BOP4 279
 #define BOP3 280
 #define BOP2 281
-#define BOP1 282
-#define UNARYOP 283
-#define LP 284
-#define RP 285
-#define LB 286
-#define RB 287
-#define DOT 288
+#define SUB 282
+#define BOP1 283
+#define UNARYOP 284
+#define UMINUS 285
+#define LP 286
+#define RP 287
+#define LB 288
+#define RB 289
+#define DOT 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -125,7 +129,7 @@ union YYSTYPE
 	char * sOperator;
 	struct treeNode * nNode;
 
-#line 129 "y.tab.h" /* yacc.c:1909  */
+#line 133 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

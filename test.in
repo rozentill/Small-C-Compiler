@@ -25,4 +25,14 @@ int main()
 	read(A.sigcomm);
 	read(C.huoguo);
 	G.FACEBOOK=(T.GOOGLE^C.huoguo);
+	if(G.FACEBOOK==A.sigcomm)
+		C.huiguorou=215;
+	else
+		C.huiguorou=0;
+	write(C.huiguorou);
+	read(R.MICROSOFT);
+	if(R.MICROSOFT)
+		write(0xD7);
+	else
+		write(-0327);
 }
