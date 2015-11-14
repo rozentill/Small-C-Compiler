@@ -1,0 +1,28 @@
+struct acrossthegreatxxxxwallwecanreacheverycornerintheworld {
+	int sigcomm;
+};
+struct haoehaoehaoewozhendehaoe {
+	int huiguorou;
+	int huoguo;
+	int shaokao;
+	int tiaoshuitu;
+};
+
+struct doubleO {
+	int GOOGLE;
+	int FACEBOOK;
+	int MICROSOFT;
+	int GROUPON;
+	int YAHOO;
+};
+
+struct acrossthegreatxxxxwallwecanreacheverycornerintheworld A,B;
+struct haoehaoehaoewozhendehaoe C;
+struct doubleO R,G,T;
+int main()
+{	
+	read(T.GOOGLE);
+	read(A.sigcomm);
+	read(C.huoguo);
+	G.FACEBOOK=(T.GOOGLE^C.huoguo);
+}

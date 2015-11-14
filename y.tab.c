@@ -65,14 +65,14 @@
 #line 1 "Small-C.y" /* yacc.c:339  */
 
 #include <stdio.h>
-#include <malloc.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-//#include <ctype.h>
+#include <malloc.h>
 #include "treeNode.h"
 Node * newNode(char * data,int size,...);
 
-Node * parseTreeRoot;
+Node * parseTreeRoot,*node1,*node2;
 
 FILE * yyin;
 FILE * yyout;
@@ -507,13 +507,13 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    45,    45,    47,    48,    50,    51,    53,    54,    55,
-      57,    58,    60,    61,    63,    64,    66,    67,    69,    71,
-      72,    73,    75,    77,    79,    80,    82,    83,    84,    85,
-      86,    87,    88,    90,    91,    93,    94,    96,    98,    99,
-     101,   102,   104,   105,   107,   108,   109,   110,   111,   112,
-     113,   114,   115,   116,   117,   118,   119,   120,   121,   122,
-     124,   125,   127,   128,   130,   131
+       0,    46,    46,    48,    49,    51,    52,    54,    55,    56,
+      58,    59,    61,    62,    64,    65,    67,    68,    70,    72,
+      73,    74,    76,    78,    80,    81,    83,    84,    85,    86,
+      87,    88,    89,    91,    92,    94,    95,    97,    99,   100,
+     102,   103,   105,   106,   108,   109,   110,   111,   112,   113,
+     114,   115,   116,   117,   118,   119,   120,   121,   122,   123,
+     125,   126,   128,   129,   131,   132
 };
 #endif
 
@@ -1388,385 +1388,385 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 45 "Small-C.y" /* yacc.c:1646  */
+#line 46 "Small-C.y" /* yacc.c:1646  */
     {parseTreeRoot=(yyval.nNode)=newNode("program",1,(yyvsp[0].nNode));}
 #line 1394 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 47 "Small-C.y" /* yacc.c:1646  */
+#line 48 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extdefs",2,(yyvsp[-1].nNode),(yyvsp[0].nNode));}
 #line 1400 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 48 "Small-C.y" /* yacc.c:1646  */
+#line 49 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extdefs",1,newNode("empty",0));}
 #line 1406 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 50 "Small-C.y" /* yacc.c:1646  */
+#line 51 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extdef",2,(yyvsp[-2].nNode),(yyvsp[-1].nNode));}
 #line 1412 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 51 "Small-C.y" /* yacc.c:1646  */
+#line 52 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extdef",3,(yyvsp[-2].nNode),(yyvsp[-1].nNode),(yyvsp[0].nNode));}
 #line 1418 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 53 "Small-C.y" /* yacc.c:1646  */
+#line 54 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extvars",1,(yyvsp[0].nNode));}
 #line 1424 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 54 "Small-C.y" /* yacc.c:1646  */
+#line 55 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extvars",3,(yyvsp[-2].nNode),newNode(",",0),(yyvsp[0].nNode));}
 #line 1430 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 55 "Small-C.y" /* yacc.c:1646  */
+#line 56 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("extvars",1,newNode("empty",0));}
 #line 1436 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 57 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("spec",1,newNode((yyvsp[0].sString),0));}
+#line 58 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("spec",1,newNode("int",0));}
 #line 1442 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 58 "Small-C.y" /* yacc.c:1646  */
+#line 59 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("spec",1,(yyvsp[0].nNode));}
 #line 1448 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 60 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stspec",5,newNode((yyvsp[-4].sString),0),(yyvsp[-3].nNode),newNode("{",0),(yyvsp[-1].nNode),newNode("}",0));}
+#line 61 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stspec",5,newNode("struct",0),(yyvsp[-3].nNode),newNode("{",0),(yyvsp[-1].nNode),newNode("}",0));}
 #line 1454 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 61 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stspec",2,newNode((yyvsp[-1].sString),0),newNode((yyvsp[0].sString),0));}
+#line 62 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stspec",2,newNode("struct",0),newNode(yylval.sIndex,0));}
 #line 1460 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 63 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("opttag",1,newNode((yyvsp[0].sString),0));}
+#line 64 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("opttag",1,newNode(yylval.sIndex,0));}
 #line 1466 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 64 "Small-C.y" /* yacc.c:1646  */
+#line 65 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("opttag",1,newNode("empty",0));}
 #line 1472 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 66 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("var",1,newNode((yyvsp[0].sString),0));}
+#line 67 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("var",1,newNode(yylval.sIndex,0));}
 #line 1478 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 67 "Small-C.y" /* yacc.c:1646  */
+#line 68 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("var",4,(yyvsp[-3].nNode),newNode("[",0),newNode((yyvsp[-1].sValue),0),newNode("]",0));}
 #line 1484 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 69 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("func",4,newNode((yyvsp[-3].sString),0),newNode("(",0),(yyvsp[-1].nNode),newNode(")",0));}
+#line 70 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("func",4,newNode(yylval.sIndex,0),newNode("(",0),(yyvsp[-1].nNode),newNode(")",0));}
 #line 1490 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 71 "Small-C.y" /* yacc.c:1646  */
+#line 72 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("paras",3,(yyvsp[-2].nNode),newNode(",",0),(yyvsp[0].nNode));}
 #line 1496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 72 "Small-C.y" /* yacc.c:1646  */
+#line 73 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("paras",1,(yyvsp[0].nNode));}
 #line 1502 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 73 "Small-C.y" /* yacc.c:1646  */
+#line 74 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("paras",1,newNode("empty",0));}
 #line 1508 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 75 "Small-C.y" /* yacc.c:1646  */
+#line 76 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("para",2,(yyvsp[-1].nNode),(yyvsp[0].nNode));}
 #line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 77 "Small-C.y" /* yacc.c:1646  */
+#line 78 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("stmtblock",4,newNode("{",0),(yyvsp[-2].nNode),(yyvsp[-1].nNode),newNode("}",0));}
 #line 1520 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 79 "Small-C.y" /* yacc.c:1646  */
+#line 80 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("stmts",2,(yyvsp[-1].nNode),(yyvsp[0].nNode));}
 #line 1526 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 80 "Small-C.y" /* yacc.c:1646  */
+#line 81 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("stmts",1,newNode("empty",0));}
 #line 1532 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 82 "Small-C.y" /* yacc.c:1646  */
+#line 83 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("stmt",1,(yyvsp[-1].nNode));}
 #line 1538 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 83 "Small-C.y" /* yacc.c:1646  */
+#line 84 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("stmt",1,(yyvsp[0].nNode));}
 #line 1544 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 84 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stmt",2,newNode((yyvsp[-2].sString),0),(yyvsp[-1].nNode));}
+#line 85 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stmt",2,newNode("return",0),(yyvsp[-1].nNode));}
 #line 1550 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 85 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stmt",6,newNode((yyvsp[-5].sString),0),newNode("(",0),(yyvsp[-3].nNode),newNode(")",0),(yyvsp[-1].nNode),(yyvsp[0].nNode));}
+#line 86 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stmt",6,newNode("if",0),newNode("(",0),(yyvsp[-3].nNode),newNode(")",0),(yyvsp[-1].nNode),(yyvsp[0].nNode));}
 #line 1556 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 86 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stmt",7,newNode((yyvsp[-8].sString),0),newNode("(",0),(yyvsp[-6].nNode),(yyvsp[-4].nNode),(yyvsp[-2].nNode),newNode(")",0),(yyvsp[0].nNode));}
+#line 87 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stmt",7,newNode("for",0),newNode("(",0),(yyvsp[-6].nNode),(yyvsp[-4].nNode),(yyvsp[-2].nNode),newNode(")",0),(yyvsp[0].nNode));}
 #line 1562 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 87 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stmt",1,newNode((yyvsp[-1].sString),0));}
+#line 88 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stmt",1,newNode("continue",0));}
 #line 1568 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 88 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("stmt",1,newNode((yyvsp[-1].sString),0));}
+#line 89 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("stmt",1,newNode("break",0));}
 #line 1574 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 90 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("estmt",2,newNode((yyvsp[-1].sString),0),(yyvsp[0].nNode));}
+#line 91 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("estmt",2,newNode("else",0),(yyvsp[0].nNode));}
 #line 1580 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 91 "Small-C.y" /* yacc.c:1646  */
+#line 92 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("estmt",1,newNode("empty",0));}
 #line 1586 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 93 "Small-C.y" /* yacc.c:1646  */
+#line 94 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("defs",2,(yyvsp[-1].nNode),(yyvsp[0].nNode));}
 #line 1592 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 94 "Small-C.y" /* yacc.c:1646  */
+#line 95 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("defs",1,newNode("empty",0));}
 #line 1598 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 96 "Small-C.y" /* yacc.c:1646  */
+#line 97 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("def",2,(yyvsp[-2].nNode),(yyvsp[-1].nNode));}
 #line 1604 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 98 "Small-C.y" /* yacc.c:1646  */
+#line 99 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("decs",3,(yyvsp[-2].nNode),newNode(",",0),(yyvsp[0].nNode));}
 #line 1610 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 99 "Small-C.y" /* yacc.c:1646  */
+#line 100 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("decs",1,(yyvsp[0].nNode));}
 #line 1616 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 101 "Small-C.y" /* yacc.c:1646  */
+#line 102 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("dec",1,(yyvsp[0].nNode));}
 #line 1622 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 102 "Small-C.y" /* yacc.c:1646  */
+#line 103 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("dec",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1628 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 104 "Small-C.y" /* yacc.c:1646  */
+#line 105 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("init",1,(yyvsp[0].nNode));}
 #line 1634 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 105 "Small-C.y" /* yacc.c:1646  */
+#line 106 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("init",3,newNode("{",0),(yyvsp[-1].nNode),newNode("}",0));}
 #line 1640 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 107 "Small-C.y" /* yacc.c:1646  */
+#line 108 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1646 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 108 "Small-C.y" /* yacc.c:1646  */
+#line 109 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 109 "Small-C.y" /* yacc.c:1646  */
+#line 110 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1658 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 110 "Small-C.y" /* yacc.c:1646  */
+#line 111 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1664 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 111 "Small-C.y" /* yacc.c:1646  */
+#line 112 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1670 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 112 "Small-C.y" /* yacc.c:1646  */
+#line 113 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1676 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 113 "Small-C.y" /* yacc.c:1646  */
+#line 114 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1682 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 114 "Small-C.y" /* yacc.c:1646  */
+#line 115 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1688 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 115 "Small-C.y" /* yacc.c:1646  */
+#line 116 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1694 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 116 "Small-C.y" /* yacc.c:1646  */
+#line 117 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1700 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 117 "Small-C.y" /* yacc.c:1646  */
+#line 118 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",2,newNode((yyvsp[-1].sOperator),0),(yyvsp[0].nNode));}
 #line 1706 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 118 "Small-C.y" /* yacc.c:1646  */
+#line 119 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",3,newNode("(",0),(yyvsp[-1].nNode),newNode(")",0));}
 #line 1712 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 119 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("exp",4,newNode((yyvsp[-3].sString),0),newNode("(",0),(yyvsp[-1].nNode),newNode(")",0));}
+#line 120 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("exp",4,newNode((yyvsp[-3].sIndex),0),newNode("(",0),(yyvsp[-1].nNode),newNode(")",0));}
 #line 1718 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 120 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("exp",2,newNode((yyvsp[-1].sString),0),(yyvsp[0].nNode));}
+#line 121 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("exp",2,newNode((yyvsp[-1].sIndex),0),(yyvsp[0].nNode));}
 #line 1724 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 121 "Small-C.y" /* yacc.c:1646  */
-    {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode(".",0),newNode((yyvsp[0].sString),0));}
+#line 122 "Small-C.y" /* yacc.c:1646  */
+    {(yyval.nNode)=newNode("exp",3,(yyvsp[-2].nNode),newNode(".",0),newNode((yyvsp[0].sIndex),0));}
 #line 1730 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 122 "Small-C.y" /* yacc.c:1646  */
+#line 123 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exp",1,newNode((yyvsp[0].sValue),0));}
 #line 1736 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 124 "Small-C.y" /* yacc.c:1646  */
+#line 125 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exps",1,(yyvsp[0].nNode));}
 #line 1742 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 125 "Small-C.y" /* yacc.c:1646  */
+#line 126 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("exps",1,newNode("empty",0));}
 #line 1748 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 127 "Small-C.y" /* yacc.c:1646  */
+#line 128 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("arrs",4,newNode("[",0),(yyvsp[-2].nNode),newNode("]",0),(yyvsp[0].nNode));}
 #line 1754 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 128 "Small-C.y" /* yacc.c:1646  */
+#line 129 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("arrs",1,newNode("empty",0));}
 #line 1760 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 130 "Small-C.y" /* yacc.c:1646  */
+#line 131 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("args",3,(yyvsp[-2].nNode),newNode(",",0),(yyvsp[0].nNode));}
 #line 1766 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 131 "Small-C.y" /* yacc.c:1646  */
+#line 132 "Small-C.y" /* yacc.c:1646  */
     {(yyval.nNode)=newNode("args",1,(yyvsp[0].nNode));}
 #line 1772 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -2000,26 +2000,24 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 133 "Small-C.y" /* yacc.c:1906  */
+#line 134 "Small-C.y" /* yacc.c:1906  */
 
 Node * newNode(char*data,int size,...){
-	Node * temp;
-	temp=(Node*)malloc(sizeof(Node));
-	//if(temp==null){printf("Memory Overflow!\n");}	
+	Node * temp=(Node *)malloc(sizeof(Node));
 	temp->data=data; 
 	temp->childrenNum=size;
 	if(size>0){
-		temp->children = (Node**)malloc(size*sizeof(Node*));
-		//if(temp->children==null){printf("Memory Overflow!");}
-		int i = size;
+		temp->children=(Node**)malloc(sizeof(Node*)*size);
+		//if(temp->children==NULL){printf("Memory Overflow!");}
+		int i = 0;
 		va_list ap;
 		va_start(ap,size);
-		va_arg(ap,int);
-		while(i>0){
+		
+		while(i<size){
 				
-			temp->children[size-i]=va_arg(ap,Node*);
-			printf("%s..\n",temp->children[size-i]->data);
-			i--;
+			temp->children[i]=va_arg(ap,Node*);
+			//printf("%s..\n",temp->children[size-i]->data);
+			i++;
 		}
 		va_end(ap);
 	}

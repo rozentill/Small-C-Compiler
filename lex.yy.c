@@ -904,72 +904,72 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 73 "Small-C.l"
-{return BOP1;}
+{yylval.sOperator=strdup(yytext);return BOP1;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 74 "Small-C.l"
-{return BOP2;}
+{yylval.sOperator=strdup(yytext);return BOP2;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 75 "Small-C.l"
-{return BOP3;}
+{yylval.sOperator=strdup(yytext);return BOP3;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 76 "Small-C.l"
-{return BOP4;}
+{yylval.sOperator=strdup(yytext);return BOP4;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 77 "Small-C.l"
-{return BOP5;}
+{yylval.sOperator=strdup(yytext);return BOP5;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 78 "Small-C.l"
-{return BOP6;}
+{yylval.sOperator=strdup(yytext);return BOP6;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 79 "Small-C.l"
-{return BOP7;}
+{yylval.sOperator=strdup(yytext);return BOP7;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 80 "Small-C.l"
-{return BOP8;}
+{yylval.sOperator=strdup(yytext);return BOP8;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 81 "Small-C.l"
-{return BOP9;}
+{yylval.sOperator=strdup(yytext);return BOP9;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 82 "Small-C.l"
-{return BOP10;}
+{yylval.sOperator=strdup(yytext);return BOP10;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 83 "Small-C.l"
-{return UNARYOP;}
+{yylval.sOperator=strdup(yytext);return UNARYOP;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 84 "Small-C.l"
-{return ASSIGNOP;}
+{yylval.sOperator=strdup(yytext);return ASSIGNOP;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 85 "Small-C.l"
-{return ID;}
+{yylval.sIndex=strdup(yytext);return ID;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 86 "Small-C.l"
-{return INT;}
+{yylval.sValue=strdup(yytext);return INT;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
