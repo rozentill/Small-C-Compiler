@@ -6,6 +6,11 @@
 //#include <ctype.h>
 #include "treeNode.h"
 Node * newNode(char * data,int size,...);
+
+Node * parseTreeRoot;
+
+FILE * yyin;
+FILE * yyout;
 %}
 %union {
         char *  sValue;
@@ -16,7 +21,6 @@ Node * newNode(char * data,int size,...);
 	struct treeNode * nNode;
 }
 
-%type <nNode> program extdefs extdef extvars spec stspec opttag var func paras para stmtblock stmts stmt estmt defs def decs dec init exp exps arrs args
 %token <iPunctuation> SEMI COMMA LC RC
 %token <sValue> INT
 %token <sString> ID TYPE STRUCT RETURN IF ELSE BREAK CONT FOR 
@@ -34,9 +38,11 @@ Node * newNode(char * data,int size,...);
 %right <sOperator> UNARYOP
 %left <iPunctuation> LP RP LB RB DOT 
 
+%start program
 
+%type <nNode> program extdefs extdef extvars spec stspec opttag var func paras para stmtblock stmts stmt estmt defs def decs dec init exp exps arrs args
 %%
-program :extdefs{$$=newNode("program",1,$1);}
+program :extdefs{parseTreeRoot=$$=newNode("program",1,$1);}
 	;
 extdefs :extdef extdefs{$$=newNode("extdefs",2,$1,$2);}
 	|{$$=newNode("extdefs",1,newNode("empty",0));}
@@ -75,9 +81,9 @@ stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}
 	;
 stmt    :exp SEMI{$$=newNode("stmt",1,$1);}
 	|stmtblock{$$=newNode("stmt",1,$1);}
-	|RETURN exp SEMI{$$=newNode("stmt",2,newNode($1,0),$2);}
-	|IF LP exps RP stmt estmt{$$=newNode("stmt",6,newNode($1,0),newNode("(",0),$3,newNode(")",0),$5,$6);}
-	|FOR LP exp SEMI exp SEMI exp RP stmt{$$=newNode("stmt",7,newNode($1,0),newNode("(",0),$3,$5,$7,newNode(")",0),$9);}
+	|RETURN exps SEMI{$$=newNode("stmt",2,newNode($1,0),$2);}
+	|IF LP exp RP stmt estmt{$$=newNode("stmt",6,newNode($1,0),newNode("(",0),$3,newNode(")",0),$5,$6);}
+	|FOR LP exps SEMI exps SEMI exps RP stmt{$$=newNode("stmt",7,newNode($1,0),newNode("(",0),$3,$5,$7,newNode(")",0),$9);}
 	|CONT SEMI{$$=newNode("stmt",1,newNode($1,0));}
 	|BREAK SEMI{$$=newNode("stmt",1,newNode($1,0));}
 	;
@@ -98,26 +104,26 @@ dec 	:var{$$=newNode("dec",1,$1);}
 init	:exp{$$=newNode("init",1,$1);}
 	|LC args RC{$$=newNode("init",3,newNode("{",0),$2,newNode("}",0));}
 	;
-exp	:exps{$$=newNode("exp",1,$1);}
-	|{$$=newNode("exp",1,newNode("empty",0));}
+exp	:exp BOP1 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP2 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP3 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP4 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP5 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP6 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP7 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP8 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP9 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp BOP10 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|UNARYOP exp{$$=newNode("exp",2,newNode($1,0),$2);}
+	|LP exp RP{$$=newNode("exp",3,newNode("(",0),$2,newNode(")",0));}
+	|ID LP args RP{$$=newNode("exp",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}
+	|ID arrs{$$=newNode("exp",2,newNode($1,0),$2);}
+	|exp DOT ID{$$=newNode("exp",3,$1,newNode(".",0),newNode($3,0));}
+	|INT{$$=newNode("exp",1,newNode($1,0));}
 	;
-exps	:exp BOP1 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP2 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP3 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP4 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP5 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP6 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP7 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP8 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP9 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|exp BOP10 exp{$$=newNode("exps",3,$1,newNode($2,0),$3);}
-	|UNARYOP exp{$$=newNode("exps",2,newNode($1,0),$2);}
-	|LP exp RP{$$=newNode("exps",3,newNode("(",0),$2,newNode(")",0));}
-	|ID LP args RP{$$=newNode("exps",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}
-	|ID arrs{$$=newNode("exps",2,newNode($1,0),$2);}
-	|exp DOT ID{$$=newNode("exps",3,$1,newNode(".",0),newNode($3,0));}
-	|INT{$$=newNode("exps",1,newNode($1,0));}
-	;
+exps    :exp{$$=newNode("exps",1,$1);}
+        |{$$=newNode("exps",1,newNode("empty",0));}
+        ;
 arrs	:LB exp RB arrs{$$=newNode("arrs",4,newNode("[",0),$2,newNode("]",0),$4);}
 	|{$$=newNode("arrs",1,newNode("empty",0));}
 	;
@@ -139,7 +145,9 @@ Node * newNode(char*data,int size,...){
 		va_start(ap,size);
 		va_arg(ap,int);
 		while(i>0){
+				
 			temp->children[size-i]=va_arg(ap,Node*);
+			printf("%s..\n",temp->children[size-i]->data);
 			i--;
 		}
 		va_end(ap);
@@ -147,11 +155,10 @@ Node * newNode(char*data,int size,...){
 	return temp;
 }
 int main(int argc,char * argv[]){
-	FILE * yyin;
-	FILE * yyout;
 	yyin = freopen(argv[1],"r",stdin);
-	yyout = freopen(argv[2],"w",stdout); 
+	yyout = freopen(argv[2],"w",stdout);
 	yyparse();
+	printParseTree(parseTreeRoot);
 	fclose(yyin);
 	fclose(yyout);
 	return 0;

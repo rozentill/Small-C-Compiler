@@ -368,8 +368,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 36
-#define YY_END_OF_BUFFER 37
+#define YY_NUM_RULES 35
+#define YY_END_OF_BUFFER 36
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -379,11 +379,11 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[87] =
     {   0,
-        0,    0,   37,   34,   32,   33,   32,   28,   18,   23,
+        0,    0,   36,   35,   32,   33,   32,   28,   18,   23,
         2,    3,   18,   19,   16,   19,   17,   18,   31,   31,
        15,   21,   29,   21,   30,    4,    5,   24,   30,   30,
        30,   30,   30,   30,   30,    6,   25,    7,   28,   32,
-       35,   32,   22,   26,   29,   28,   31,   31,    0,   20,
+       34,   32,   22,   26,   29,   28,   31,   31,    0,   20,
        21,   20,   30,   30,   30,   30,   30,   30,   10,   30,
        30,   30,   27,   31,   30,   30,   30,   14,    1,   30,
        30,   30,   30,   11,   30,   30,   12,   30,   30,   30,
@@ -819,17 +819,17 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 56 "Small-C.l"
-{printf(":%s",yytext);return TYPE;}
+{return TYPE;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 57 "Small-C.l"
-{printf(":%s",yytext);return LP;}
+{return LP;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 58 "Small-C.l"
-{printf(":%s",yytext);return RP;}
+{return RP;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -844,12 +844,12 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 61 "Small-C.l"
-{printf(":%s",yytext);return LC;}
+{return LC;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 62 "Small-C.l"
-{printf(":%s",yytext);return RC;}
+{return RC;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
@@ -859,7 +859,7 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 64 "Small-C.l"
-{printf(":%s",yytext);return RETURN;}
+{return RETURN;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
@@ -889,7 +889,7 @@ YY_RULE_SETUP
 case 15:
 YY_RULE_SETUP
 #line 70 "Small-C.l"
-{printf(":%s",yytext);return SEMI;}
+{return SEMI;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
@@ -964,44 +964,38 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 #line 85 "Small-C.l"
-{printf(":%s",yytext);return ID;}
+{return ID;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 86 "Small-C.l"
-{printf(":%s",yytext);//sscanf(yytext,"%d",&yylval);
-	return INT;}
+{return INT;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 88 "Small-C.l"
+#line 87 "Small-C.l"
 {;}
 	YY_BREAK
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 89 "Small-C.l"
+#line 88 "Small-C.l"
 {linecount++;}
 	YY_BREAK
 case 34:
-YY_RULE_SETUP
-#line 90 "Small-C.l"
-{printf(":%s",yytext);}
-	YY_BREAK
-case 35:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 91 "Small-C.l"
+#line 89 "Small-C.l"
 {;}
 	YY_BREAK
-case 36:
+case 35:
 YY_RULE_SETUP
-#line 92 "Small-C.l"
+#line 90 "Small-C.l"
 ECHO;
 	YY_BREAK
-#line 1005 "lex.yy.c"
+#line 999 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1999,7 +1993,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "Small-C.l"
+#line 90 "Small-C.l"
 
 
 
