@@ -20,8 +20,9 @@ comma ","
 string \"[^\"]*\"
 
 dot "."
+sub "-"
 bop1 "*"|"/"|"%"
-bop2 "+"|"-"
+bop2 "+"
 bop3 "<<"|">>"
 bop4 ">"|"<"|">="|"<="
 bop5 "=="|"!="
@@ -30,7 +31,7 @@ bop7 "^"
 bop8 "|"
 bop9 "&&"
 bop10 "||"
-unaryop "++"|"--"|"!"|"~"|"-"
+unaryop "++"|"--"|"!"|"~"
 
 
 assignop "="|"+="|"-="|"*="|"/="|"&="|"^="|"|="|"<<="|">>="
@@ -70,20 +71,21 @@ end [ \t]+$
 {semi} {return SEMI;}
 {comma} {return COMMA;}
 {dot} {return DOT;}
-{bop1} {return BOP1;}
-{bop2} {return BOP2;}
-{bop3} {return BOP3;}
-{bop4} {return BOP4;}
-{bop5} {return BOP5;}
-{bop6} {return BOP6;}
-{bop7} {return BOP7;}
-{bop8} {return BOP8;}
-{bop9} {return BOP9;}
-{bop10} {return BOP10;}
-{unaryop} {return UNARYOP;}
-{assignop} {return ASSIGNOP;}
-{id} {return ID;}
-{int} {return INT;}
+{sub} {yylval.sOperator=strdup(yytext);return SUB;}
+{bop1} {yylval.sOperator=strdup(yytext);return BOP1;}
+{bop2} {yylval.sOperator=strdup(yytext);return BOP2;}
+{bop3} {yylval.sOperator=strdup(yytext);return BOP3;}
+{bop4} {yylval.sOperator=strdup(yytext);return BOP4;}
+{bop5} {yylval.sOperator=strdup(yytext);return BOP5;}
+{bop6} {yylval.sOperator=strdup(yytext);return BOP6;}
+{bop7} {yylval.sOperator=strdup(yytext);return BOP7;}
+{bop8} {yylval.sOperator=strdup(yytext);return BOP8;}
+{bop9} {yylval.sOperator=strdup(yytext);return BOP9;}
+{bop10} {yylval.sOperator=strdup(yytext);return BOP10;}
+{unaryop} {yylval.sOperator=strdup(yytext);return UNARYOP;}
+{assignop} {yylval.sOperator=strdup(yytext);return ASSIGNOP;}
+{id} {yylval.sIndex=strdup(yytext);return ID;}
+{int} {yylval.sValue=strdup(yytext);return INT;}
 {whitespace} {;}
 {newline} {linecount++;}
 {end} {;}

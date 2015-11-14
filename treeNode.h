@@ -9,16 +9,16 @@ typedef struct treeNode{
 } Node; 
 
 printRoot(Node * root){
-	printf("%s\n%s",root->data,root->children[0]->data);
+	printf("%s\n",root->data);
 }
-/*
+
 printNodes(Node * node,int height){
-	int i=height*2;
+	int i=height*4;
 	while(i>0){
-		printf(" ");
+		printf("-");
 		i--;
 	}
-	printf("|-%s\n",node->data);
+	printf("|%s\n",node->data);
 	int childNum=node->childrenNum;
 	int j=0;
 	for(;j<childNum;j++){
@@ -27,18 +27,18 @@ printNodes(Node * node,int height){
 	free(node->children);
 	free(node);
 }
-*/
+
 printParseTree(Node * root){
 	printRoot(root);
 	
 	int rootChildNum=root->childrenNum;
 	int i=0;
-	/*
+	
 	for(;i<rootChildNum;i++){
-		printNodes(root->children[i],0);
+		printNodes(root->children[i],1);
 	}
 	free(root->children);
-	*/
+	
 }
 
 #endif
