@@ -1,3 +1,6 @@
+/*
+This is a yacc file , it use grammer rule to construct a parse tree.I have modified three rules in order to make it more similar to C grammer.
+*/
 %{
 #include <stdio.h>
 #include <string.h>
@@ -64,7 +67,7 @@ stspec  :STRUCT opttag LC defs RC{$$=newNode("stspec",5,newNode("struct",0),$2,n
 opttag  :ID{$$=newNode("opttag",1,newNode(yylval.sIndex,0));}
 	|{$$=newNode("opttag",1,newNode("empty",0));}
 	;
-var 	:ID{$$=newNode("var",1,newNode($1,0));}/*change ID into exp*/
+var 	:ID{$$=newNode("var",1,newNode($1,0));}
 	|var LB INT RB{$$=newNode("var",4,$1,newNode("[",0),newNode($3,0),newNode("]",0));}
 	;
 func    :ID LP paras RP{$$=newNode("func",4,newNode(yylval.sIndex,0),newNode("(",0),$3,newNode(")",0));}
@@ -117,13 +120,13 @@ exp	:exp BOP1 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
 	|exp BOP10 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
 	|exp SUB exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
 	|UNARYOP exp{$$=newNode("exp",2,newNode($1,0),$2);}
-	|SUB exp %prec UMINUS{$$=newNode("exp",2,newNode($1,0),$2);}
+	|SUB exp %prec UMINUS{$$=newNode("exp",2,newNode($1,0),$2);}/*The unaryop "-" should be distinguished with binaryop "-"*/
 	|LP exp RP{$$=newNode("exp",3,newNode("(",0),$2,newNode(")",0));}
 	|ID LP args RP{$$=newNode("exp",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}
 	|ID arrs{$$=newNode("exp",2,newNode($1,0),$2);}
 	|exp DOT ID{$$=newNode("exp",3,$1,newNode(".",0),newNode($3,0));}
 	|INT{$$=newNode("exp",1,newNode($1,0));}
-	|exp ASSIGNOP exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
+	|exp ASSIGNOP exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}/*This is added by me ,since it's necessary.*/
 	;
 exps    :exp{$$=newNode("exps",1,$1);}
         |{$$=newNode("exps",1,newNode("empty",0));}
