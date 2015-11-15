@@ -1,3 +1,6 @@
+/*
+This is the lex file,it defines how to match the input and convey the value to yacc file.In particularly,since "-" can be a binaryop or a unaryop,I define it alone as sub.
+*/
 %{
 #include<stdio.h>
 #include<stdlib.h>

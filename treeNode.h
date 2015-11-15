@@ -1,3 +1,6 @@
+/*
+This file define the node of the tree and the print function of the parse tree.
+*/
 #ifndef TREENODE_H
 #define TREENODE_H
 #include<stdio.h>
