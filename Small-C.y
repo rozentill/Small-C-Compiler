@@ -8,6 +8,9 @@ This is a yacc file , it use grammer rule to construct a parse tree.I have modif
 #include <stdarg.h>
 #include <malloc.h>
 #include "treeNode.h"
+
+extern int yylineno
+
 Node * newNode(char * data,int size,...);
 
 Node * parseTreeRoot,*node1,*node2;
@@ -27,8 +30,8 @@ FILE * yyout;
 %token <iPunctuation> SEMI COMMA LC RC
 %token <sValue> INT
 %token <sIndex> ID
-%token <sString> TYPE STRUCT RETURN IF ELSE BREAK CONT FOR 
-%right <sOperator> ASSIGNOP 
+%token <sString> TYPE STRUCT RETURN IF ELSE BREAK CONT FOR
+%right <sOperator> ASSIGNOP
 %left <sOperator> BOP10
 %left <sOperator> BOP9
 %left <sOperator> BOP8
@@ -40,7 +43,7 @@ FILE * yyout;
 %left <sOperator> BOP2 SUB
 %left <sOperator> BOP1
 %right <sOperator> UNARYOP UMINUS
-%left <iPunctuation> LP RP LB RB DOT 
+%left <iPunctuation> LP RP LB RB DOT
 
 %start program
 
@@ -140,7 +143,7 @@ args	:exp COMMA args{$$=newNode("args",3,$1,newNode(",",0),$3);}
 %%
 Node * newNode(char*data,int size,...){
 	Node * temp=(Node *)malloc(sizeof(Node));
-	temp->data=data; 
+	temp->data=data;
 	temp->childrenNum=size;
 	if(size>0){
 		temp->children=(Node**)malloc(sizeof(Node*)*size);
@@ -148,9 +151,9 @@ Node * newNode(char*data,int size,...){
 		int i = 0;
 		va_list ap;
 		va_start(ap,size);
-		
+
 		while(i<size){
-				
+
 			temp->children[i]=va_arg(ap,Node*);
 			//printf("%s..\n",temp->children[size-i]->data);
 			i++;
@@ -171,4 +174,3 @@ int main(int argc,char * argv[]){
 int yyerror(char * msg){
 	printf("%s.\n",msg);
 }
-
