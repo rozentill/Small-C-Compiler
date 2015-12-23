@@ -5,7 +5,7 @@ This is the lex file,it defines how to match the input and convey the value to y
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include"y.tab.c"
+#include"y.tab.h"
 
 
 %}
