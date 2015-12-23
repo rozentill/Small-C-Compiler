@@ -5,7 +5,7 @@ This is the lex file,it defines how to match the input and convey the value to y
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include"y.tab.h"
+#include"y.tab.c"
 
 
 %}
@@ -38,7 +38,7 @@ unaryop "++"|"--"|"!"|"~"
 
 assignop "="|"+="|"-="|"*="|"/="|"&="|"^="|"|="|"<<="|">>="
 type int
-lp "(" 
+lp "("
 rp ")"
 lb "["
 rb "]"
@@ -46,14 +46,14 @@ lc "{"
 rc "}"
 struct struct
 return return
-if if 
-else else 
+if if
+else else
 break break
 cont continue
 for for
-newline [\n] 
+newline [\n]
 delium [ \t\v\f]
-whitespace {delium}+ 
+whitespace {delium}+
 end [ \t]+$
 %%
 {type} {return TYPE;}
