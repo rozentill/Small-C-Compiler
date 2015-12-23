@@ -8,6 +8,9 @@ This is a yacc file , it use grammer rule to construct a parse tree.I have modif
 #include <stdarg.h>
 #include <malloc.h>
 #include "treeNode.h"
+
+extern int yylineno;
+
 Node * newNode(char * data,int size,...);
 
 Node * parseTreeRoot,*node1,*node2;
@@ -169,6 +172,6 @@ int main(int argc,char * argv[]){
 	return 0;
 }
 int yyerror(char * msg){
-	printf("%s.\n",msg);
+	fprintf(stderr,"Error: %s appeared at line : %d.\n",msg,yylineno);
 }
 

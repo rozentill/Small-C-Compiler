@@ -7,7 +7,6 @@ This is the lex file,it defines how to match the input and convey the value to y
 #include<string.h>
 #include"y.tab.h"
 
-int linecount=1;
 
 %}
 digit [0-9]
@@ -90,7 +89,7 @@ end [ \t]+$
 {id} {yylval.sIndex=strdup(yytext);return ID;}
 {int} {yylval.sValue=strdup(yytext);return INT;}
 {whitespace} {;}
-{newline} {linecount++;}
+{newline} {yylineno++;}
 {end} {;}
 %%
 
