@@ -1,3 +1,5 @@
+*.ll
+test*
 testcases
 lex.yy.c
 Parser

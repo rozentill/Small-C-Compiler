@@ -147,15 +147,12 @@ Node * newNode(char*data,int size,...){
 	temp->childrenNum=size;
 	if(size>0){
 		temp->children=(Node**)malloc(sizeof(Node*)*size);
-		//if(temp->children==NULL){printf("Memory Overflow!");}
 		int i = 0;
 		va_list ap;
 		va_start(ap,size);
 
 		while(i<size){
-
 			temp->children[i]=va_arg(ap,Node*);
-			//printf("%s..\n",temp->children[size-i]->data);
 			i++;
 		}
 		va_end(ap);
