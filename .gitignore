@@ -1,6 +1,6 @@
 *.ll
 test*
-testcases
 lex.yy.c
-Parser
 *.tab.*
+Parser
+Code-Generator
