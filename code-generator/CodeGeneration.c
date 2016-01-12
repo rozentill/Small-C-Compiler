@@ -11,12 +11,83 @@ Code Generation Function Implementation
 
 
 void codeGen(Node * root,FILE * fout){
-	
-	
+
+	translate(root);
 
 }
 
 void translate(Node * root){
-	if(strcmp(root->data,"program"))
+	if(!strcmp(root->data,"program")){//program
+
+		translate(root);
+
+	}
+	else if (!strcmp(root->data,"extdefs")) {//extdefs
+
+		if (strcmp(root->children[0]->data,"empty")) {
+			translate(root->children[0]);
+			translate(root->children[1]);
+		}
+
+	}
+	else if (!strcmp(root->data,"extdef")) {//extdef
+
+		if (!strcmp(root->children[1]->data,"func")) {//spec func stmtblock
+			translate(root->children[1]);//func
+			translate(root->children[2]);//stmtblock
+		}
+		else{//spec extvars SEMI
+			translate
+		}
+
+	}
+	else if (!strcmp(root->data,"func")) {//func
+
+		printf("define i32 @%s(",root->children[0]->data);
+		translate(root->children[2]);//paras
+		printf(") #0 {\n");
+
+	}
+	else if (!strcmp(root->data,"paras")) {//paras
+
+		if (!strcmp(root->children[0]->data,"empty")) {//empty
+		}
+		else if (root->childrenNum == 3) {//para COMMA paras
+			translate(root->children[0]);
+			printf(",");
+			translate(root->children[2]);
+		}
+		else{//para
+			translate(root->children[0]);
+		}
+
+	}
+	else if (!strcmp(root->data,"para")) {
+
+		printf("i32 %%%s",);
+
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+	else if (/* condition */) {
+		/* code */
+	}
+
 
 }
