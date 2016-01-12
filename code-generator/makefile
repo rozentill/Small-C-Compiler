@@ -5,5 +5,5 @@ lex.yy.c:y.tab.h Small-C.l
 y.tab.c y.tab.h:Small-C.y treeNode.h
 	yacc -d Small-C.y
 clean:
-	rm -rf *.o Parser
+	rm -rf *.o Parser *.tab.* lex.yy.c
 
