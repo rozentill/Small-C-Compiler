@@ -163,7 +163,7 @@ int main(int argc,char * argv[]){
 	yyin = freopen(argv[1],"r",stdin);
 	yyout = freopen(argv[2],"w",stdout);
 	yyparse();
-	printParseTree(parseTreeRoot);
+	codeGen(parseTreeRoot,yyout);
 	fclose(yyin);
 	fclose(yyout);
 	return 0;
