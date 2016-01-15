@@ -62,9 +62,9 @@ void translate(Node * root){
 		}
 
 	}
-	else if (!strcmp(root->data,"para")) {
+	else if (!strcmp(root->data,"para")) {//para ,only can be "int a" ,no "int [] a"
 
-		printf("i32 %%%s",);
+		printf("i32 %%%s",root->children[1]->children[0]->data);
 
 	}
 	else if (/* condition */) {
