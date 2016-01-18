@@ -10,7 +10,13 @@ Code Generation Function Implementation
 #include "treeNode.h"
 #include "paraQueue.c"
 
+//initialize paraQueue
 ParaQueue paraQueue;
+paraQueue.start = 0;
+paraQueue.end = 0;
+paraQueue.size = 10;
+paraQueue.num = 0;
+paraQueue.queue = (char **)malloc(sizeof(char *)*paraQueue.size);
 
 void translate(Node * root) ;
 
@@ -69,19 +75,22 @@ void translate(Node * root){
 	else if (!strcmp(root->data,"para")) {//para ,only can be "int a" ,no "int [] a"
 
 		printf("i32 %%%s",root->children[1]->children[0]->data);
-		paraQueue.enqueue(root->children[1]->children[0]->data);
+		enqueue(paraQueue,root->children[1]->children[0]->data);
 
 	}
 	else if (!strcmp(root->data,"funcstmtblock")) {
 		int paraNum=0;
+
 		while (paraQueue.num>paraNum) {
 			paraNum++;
 			printf("%%%d = alloca i32, align 4\n",paraNum);
 		}
+
 		paraNum = 0;
+
 		while (paraQueue.end!=paraQueue.start) {
 			paraNum++;
-			printf("store i32 %%%s, i32* %%%d, align 4\n",paraQueue.dequeue(),paraNum);
+			printf("store i32 %%%s, i32* %%%d, align 4\n",dequeue(paraQueue),paraNum);
 		}
 	}
 	// else if (/* condition */) {
