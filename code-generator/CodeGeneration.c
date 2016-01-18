@@ -8,6 +8,9 @@ Code Generation Function Implementation
 #include <stdlib.h>
 #include <malloc.h>
 #include "treeNode.h"
+#include "paraQueue.c"
+
+ParaQueue paraQueue;
 
 void translate(Node * root) ;
 
@@ -65,10 +68,16 @@ void translate(Node * root){
 	}
 	else if (!strcmp(root->data,"para")) {//para ,only can be "int a" ,no "int [] a"
 
-			printf("i32 %%%s",root->children[1]->children[0]->data);
+		printf("i32 %%%s",root->children[1]->children[0]->data);
+		paraQueue.enqueue(root->children[1]->children[0]->data);
 
 	}
 	else if (!strcmp(root->data,"funcstmtblock")) {
+		int paraNum=0;
+		while (paraQueue.end!=paraQueue.start) {
+			paraNum++;
+		}
+
 
 	}
 	else if (/* condition */) {
