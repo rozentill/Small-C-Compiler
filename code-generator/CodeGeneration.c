@@ -74,30 +74,34 @@ void translate(Node * root){
 	}
 	else if (!strcmp(root->data,"funcstmtblock")) {
 		int paraNum=0;
+		while (paraQueue.num>paraNum) {
+			paraNum++;
+			printf("%%%d = alloca i32, align 4\n",paraNum);
+		}
+		paraNum = 0;
 		while (paraQueue.end!=paraQueue.start) {
 			paraNum++;
+			printf("store i32 %%%s, i32* %%%d, align 4\n",paraQueue.dequeue(),paraNum);
 		}
-
-
 	}
-	else if (/* condition */) {
-		/* code */
-	}
-	else if (/* condition */) {
-		/* code */
-	}
-	else if (/* condition */) {
-		/* code */
-	}
-	else if (/* condition */) {
-		/* code */
-	}
-	else if (/* condition */) {
-		/* code */
-	}
-	else if (/* condition */) {
-		/* code */
-	}
+	// else if (/* condition */) {
+	// 	/* code */
+	// }
+	// else if (/* condition */) {
+	// 	/* code */
+	// }
+	// else if (/* condition */) {
+	// 	/* code */
+	// }
+	// else if (/* condition */) {
+	// 	/* code */
+	// }
+	// else if (/* condition */) {
+	// 	/* code */
+	// }
+	// else if (/* condition */) {
+	// 	/* code */
+	// }
 
 
 }
