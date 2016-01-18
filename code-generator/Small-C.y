@@ -8,6 +8,7 @@ This is a yacc file , it use grammer rule to construct a parse tree.I have modif
 #include <stdarg.h>
 #include <malloc.h>
 #include "treeNode.h"
+#include "CodeGeneration.c"
 
 extern int yylineno;
 
@@ -19,10 +20,10 @@ FILE * yyin;
 FILE * yyout;
 %}
 %union {
-        char *  sValue;
-        int iPunctuation;
+  char *  sValue;
+  int iPunctuation;
 	char * sIndex;
-        char * sString;
+  char * sString;
 	char * sOperator;
 	struct treeNode * nNode;
 }
@@ -47,21 +48,21 @@ FILE * yyout;
 
 %start program
 
-%type <nNode> program extdefs extdef extvars spec stspec opttag var func paras para stmtblock stmts stmt estmt defs def decs dec init exp exps arrs args
+%type <nNode> program extdefs extdef extvars spec stspec opttag var func paras para stmtblock funcstmtblock stmts stmt estmt defs def decs dec init exp exps arrs args
 %%
-program :extdefs{parseTreeRoot=$$=newNode("program",1,$1);}
+program :extdefs{parseTreeRoot=$$=newNode("program",1,$1);}//finished
 	;
-extdefs :extdef extdefs{$$=newNode("extdefs",2,$1,$2);}
-	|{$$=newNode("extdefs",1,newNode("empty",0));}
+extdefs :extdef extdefs{$$=newNode("extdefs",2,$1,$2);}//finished
+	|{$$=newNode("extdefs",1,newNode("empty",0));}//finished
 	;
 extdef  :spec extvars SEMI{$$=newNode("extdef",2,$1,$2);}
-	|spec func stmtblock{$$=newNode("extdef",3,$1,$2,$3);}
+	|spec func funcstmtblock{$$=newNode("extdef",3,$1,$2,$3);}//finished
 	;
 extvars :dec{$$=newNode("extvars",1,$1);}
 	|dec COMMA extvars{$$=newNode("extvars",3,$1,newNode(",",0),$3);}
 	|{$$=newNode("extvars",1,newNode("empty",0));}
 	;
-spec    :TYPE{$$=newNode("spec",1,newNode("int",0));}
+spec    :TYPE{$$=newNode("spec",1,newNode("TYPE",1,newNode("int",0)));}
 	|stspec{$$=newNode("spec",1,$1);}
 	;
 stspec  :STRUCT opttag LC defs RC{$$=newNode("stspec",5,newNode("struct",0),$2,newNode("{",0),$4,newNode("}",0));}
@@ -73,13 +74,15 @@ opttag  :ID{$$=newNode("opttag",1,newNode(yylval.sIndex,0));}
 var 	:ID{$$=newNode("var",1,newNode($1,0));}
 	|var LB INT RB{$$=newNode("var",4,$1,newNode("[",0),newNode($3,0),newNode("]",0));}
 	;
-func    :ID LP paras RP{$$=newNode("func",4,newNode(yylval.sIndex,0),newNode("(",0),$3,newNode(")",0));}
+func    :ID LP paras RP{$$=newNode("func",4,newNode(yylval.sIndex,0),newNode("(",0),$3,newNode(")",0));}//finished
 	;
-paras   :para COMMA paras{$$=newNode("paras",3,$1,newNode(",",0),$3);}
-	|para{$$=newNode("paras",1,$1);}
-	|{$$=newNode("paras",1,newNode("empty",0));}
+paras   :para COMMA paras{$$=newNode("paras",3,$1,newNode(",",0),$3);}//finished
+	|para{$$=newNode("paras",1,$1);}//finished
+	|{$$=newNode("paras",1,newNode("empty",0));}//finished
 	;
-para    :spec var{$$=newNode("para",2,$1,$2);}
+para    :spec var{$$=newNode("para",2,$1,$2);}//finished
+	;
+funcstmtblock:LC defs stmts RC{$$=newNode("funcstmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}
 	;
 stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}
 	;

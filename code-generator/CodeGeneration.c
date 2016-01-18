@@ -9,6 +9,7 @@ Code Generation Function Implementation
 #include <malloc.h>
 #include "treeNode.h"
 
+void translate(Node * root) ;
 
 void codeGen(Node * root,FILE * fout){
 
@@ -37,7 +38,7 @@ void translate(Node * root){
 			translate(root->children[2]);//stmtblock
 		}
 		else{//spec extvars SEMI
-			translate
+			// translate
 		}
 
 	}
@@ -64,11 +65,11 @@ void translate(Node * root){
 	}
 	else if (!strcmp(root->data,"para")) {//para ,only can be "int a" ,no "int [] a"
 
-		printf("i32 %%%s",root->children[1]->children[0]->data);
+			printf("i32 %%%s",root->children[1]->children[0]->data);
 
 	}
-	else if (/* condition */) {
-		/* code */
+	else if (!strcmp(root->data,"funcstmtblock")) {
+
 	}
 	else if (/* condition */) {
 		/* code */
