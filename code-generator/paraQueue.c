@@ -6,16 +6,16 @@ struct ParaQueue{
 	int end;
 	int size;
 	int num;
-  char * queue[size];
+  char * queue[10];
 };
 
-void enqueue(ParaQueue paraQueue,char * para){
+void enqueue(struct ParaQueue paraQueue,char * para){
   paraQueue.queue[paraQueue.end] = para;
 	paraQueue.end = (paraQueue.end + 1)%paraQueue.size;
 	paraQueue.num++;
 }
 
-char * dequeue(ParaQueue paraQueue){
+char * dequeue(struct ParaQueue paraQueue){
 	char * tmp = paraQueue.queue[paraQueue.start];
 	paraQueue.start = (paraQueue.start + 1)%paraQueue.size;
 	paraQueue.num--;

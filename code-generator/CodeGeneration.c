@@ -16,7 +16,7 @@ paraQueue.start = 0;
 paraQueue.end = 0;
 paraQueue.size = 10;
 paraQueue.num = 0;
-paraQueue.queue = (char **)malloc(sizeof(char *)*paraQueue.size);
+paraQueue.queue = (char **)malloc(sizeof(char *)*10);
 
 void translate(Node * root) ;
 
