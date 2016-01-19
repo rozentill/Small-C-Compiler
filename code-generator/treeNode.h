@@ -11,11 +11,11 @@ typedef struct treeNode{
 	struct treeNode ** children;
 } Node; 
 
-printRoot(Node * root){
+void printRoot(Node * root){
 	printf("%s\n",root->data);
 }
 
-printNodes(Node * node,int height){
+void printNodes(Node * node,int height){
 	int i=height*4;
 	while(i>0){
 		printf("-");
@@ -31,7 +31,7 @@ printNodes(Node * node,int height){
 	free(node);
 }
 
-printParseTree(Node * root){
+void printParseTree(Node * root){
 	printRoot(root);
 	
 	int rootChildNum=root->childrenNum;
