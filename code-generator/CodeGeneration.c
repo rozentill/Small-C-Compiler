@@ -50,7 +50,24 @@ void translate(Node * root,ParaQueue * paraQueue){
 			translate(root->children[2],paraQueue);//stmtblock
 		}
 		else{//spec extvars SEMI
-			// translate
+			if(!strcmp(root->children[0]->children[0]->data,"TYPE")){//spec : TYPE
+
+			}
+			else if (!strcmp(root->children[0]->children[0]->data,"stspec")){//spec:stspec
+				Node * stspec = root->children[0]->children[0];
+				if (stspec->childrenNum==5)//STRUCT opttag LC defs RC
+				{
+					printf("%%struct.%s = type { ",stspec->children[1]->children[0]->data);
+
+					defs = stspec->children[3];
+					if (defs->childrenNum==2)//defs:def defs
+					{
+						
+					}
+
+					printf(" } \n");
+				}
+			}
 		}
 
 	}
@@ -130,4 +147,3 @@ void translate(Node * root,ParaQueue * paraQueue){
 }
 
 
-void translate_
