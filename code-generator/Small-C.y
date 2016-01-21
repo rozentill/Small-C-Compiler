@@ -89,7 +89,7 @@ stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode
 stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}
 	|{$$=newNode("stmts",1,newNode("empty",0));}
 	;
-stmt    :exp SEMI{$$=newNode("stmt",1,$1);}
+stmt    :exps SEMI{$$=newNode("stmt",1,$1);}
 	|stmtblock{$$=newNode("stmt",1,$1);}
 	|RETURN exps SEMI{$$=newNode("stmt",2,newNode("return",0),$2);}
 	|IF LP exp RP stmt estmt{$$=newNode("stmt",6,newNode("if",0),newNode("(",0),$3,newNode(")",0),$5,$6);}

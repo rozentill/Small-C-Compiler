@@ -10,6 +10,10 @@ Code Generation Function Implementation
 #include "treeNode.h"
 #include "paraQueue.h"
 
+
+//initialization
+int returnNum;
+
 void translate(Node * root,ParaQueue * paraQueue) ;
 
 void codeGen(Node * root,FILE * fout){
@@ -31,7 +35,6 @@ void codeGen(Node * root,FILE * fout){
 
 void translate(Node * root,ParaQueue * paraQueue){
 	if(!strcmp(root->data,"program")){//program
-		printf("program is fine\n");
 		translate(root->children[0],paraQueue);
 
 	}
@@ -205,8 +208,119 @@ void translate(Node * root,ParaQueue * paraQueue){
 
 		if (dec->childrenNum==1) {//dec : var
 			if (dec->children[0]->childrenNum==1) {//var:ID
-				printf("@%s = alloca i32 , align 4\n",dec->children[0]->children[0]->data);
+				printf("  %%%s = alloca i32 , align 4\n",dec->children[0]->children[0]->data);
 			}
+			else{//var : var LB INT RB
+				Node * id = dec->children[0]->children[0]->children[0];
+				Node * num = dec->children[0]->children[2];
+				printf("  %%%s = alloca [ %d x i32], align 4\n",id->data,atoi(num->data));
+			}
+		}
+		else{//dec:var ASSIGNOP init
+			Node * init = dec->children[2];
+			if (dec->children[0]->childrenNum==1) {//var:ID
+				printf("  %%%s = alloca i32 , align 4\n",dec->children[0]->children[0]->data);
+				printf("  store i32 %d, i32* %s, align 4\n",atoi(init->children[0]->children[0]->data),dec->children[0]->children[0]->data);
+			}
+			else{//var : var LB INT RB ***数组定义赋值***
+				Node * id = dec->children[0]->children[0]->children[0];
+				Node * num = dec->children[0]->children[2];
+				printf("  %%%s = alloca [ %d x i32], align 4\n",id->data,atoi(num->data));
+				Node * exps =
+			}
+		}
+	}
+	else if (!strcmp(root->data,"stmts")) {
+		if (!strcmp(root->children[0]->data,"empty")) {
+			return;
+		}
+		else{
+			translate(root->children[0]);//stmt
+			translate(root->children[1]);//stmts
+		}
+	}
+	else if (!strcmp(root->data,"stmt")) {
+		if (!strcmp(root->children[0]->data,"exps")) {
+			translate(root->children[0]);
+		}
+		else if (!strcmp(root->children[0]->data,"stmtblock") {
+			// entryDepth++;
+			translate(root->children[0]);
+			// entryDepth--;
+		}
+		else if(!strcmp(root->children[0]->data,"return"))
+		{
+
+        char * tmp;
+        tmp = translate_exp(root->child[1]);
+				printf("  %%%d = load i32, i32* %s, align 4\n",returnNum,tmp);
+				printf("  ret i32 %%%d\n",returnNum);
+        returnNum++;
+		}
+		else if (!strcmp(root->children[0]->data,"if") {//IF LP exp RP stmt estmt
+				if (strcmp(root->children[5]->children[0]->data,"empty")!=0) //ESTMT not null
+        {
+            char* tmp = translate_exp(root->children[2]);
+
+            if (!strcmp(root->children[2]->children[1],"."))//exp:exp DOT ID
+            {
+                char num[10];
+                sprintf(num, "%d", returnNum++);
+                char* tmpReg;
+                strcpy(tmpReg,"%%r");
+                strcat(tmpReg,num);
+								printf("  %s = icmp ne i32 %s, 0\n",tmpReg,tmp);
+                strcpy(tmp,tmpReg);
+            }
+						//stop here
+
+            fprintf(fout,"  br i1 %s, label %%if%d.then, label %%if%d.else\n\n",tmp, ifNum, ifNum);
+
+            fprintf(fout,"if%d.then:\n",ifNum);
+            stmt(p->child->brother->brother->brother->brother);
+            fprintf(fout,"  br label %%if%d.end\n\n",ifNum);
+
+            fprintf(fout,"if%d.else:\n",ifNum);
+            stmt(p->child->brother->brother->brother->brother->brother->child->brother);
+            fprintf(fout,"  br label %%if%d.end\n\n",ifNum);
+
+            fprintf(fout,"if%d.end:\n",ifNum);
+
+            ifNum++;
+        }
+				else
+        {
+
+            char* tmp = (char*)malloc(sizeof(char)*60);
+            tmp = Exps(p->child->brother->brother);
+
+            if (!strcmp(p->child->brother->brother->child->brother->name,"."))//DOT, special case
+            {
+                char num[10];
+                sprintf(num, "%d", rNum++);
+                char* tmpReg = (char*)malloc(sizeof(char)*60);
+                strcpy(tmpReg,"%r");
+                strcat(tmpReg,num);
+
+                fprintf(fout,"  %s = icmp ne i32 %s, 0\n",tmpReg,tmp);
+                strcpy(tmp,tmpReg);
+            }
+
+
+            fprintf(fout,"  br i1 %s, label %%if%d.then, label %%if%d.end\n\n",tmp, ifNum, ifNum);
+
+            fprintf(fout,"if%d.then:\n",ifNum);
+            stmt(p->child->brother->brother->brother->brother);
+            fprintf(fout,"  br label %%if%d.end\n\n",ifNum);
+
+            fprintf(fout,"if%d.end:\n",ifNum);
+
+            ifNum++;
+
+        }//if end
+		}
+		else if (!strcmp(root->children[0]->data,"for") {
+			/* code */
 		}
 	}
 	// else if (/* condition */) {
@@ -215,12 +329,10 @@ void translate(Node * root,ParaQueue * paraQueue){
 	// else if (/* condition */) {
 	// 	/* code */
 	// }
-	// else if (/* condition */) {
-	// 	/* code */
-	// }
-	// else if (/* condition */) {
-	// 	/* code */
-	// }
 
+
+}
+
+char * translate_exp(Node * root){
 
 }
