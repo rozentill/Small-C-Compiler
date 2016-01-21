@@ -64,7 +64,7 @@ void translate(Node * root,ParaQueue * paraQueue){
 						else{//var:var LB INT RB assume only one-dimensinal array
 							Node * id = dec->children[0]->children[0]->children[0];
 							Node * num = dec->children[0]->children[2];
-							printf("@%s = common global [ %d x i32] zeroinitializer, align %d\n",id->data,atoi(num->data),atoi(num->data)*4);
+							printf("@%s = common global [ %d x i32] zeroinitializer, align %d\n",id->data,atoi(num->data),atoi(num->data)*2);
 						}
 
 					}
@@ -84,7 +84,7 @@ void translate(Node * root,ParaQueue * paraQueue){
 								printf("i32 %d",atoi(args->children[0]->children[0]->data));
 							}
 
-							printf("], align %d\n",atoi(num->data)*4);
+							printf("], align %d\n",atoi(num->data)*2);
 						}
 
 					}
