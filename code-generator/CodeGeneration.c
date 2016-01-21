@@ -82,8 +82,13 @@ void translate(Node * root,ParaQueue * paraQueue){
 							Node * args = init->children[1];
 							while (args) {
 								printf("i32 %d",atoi(args->children[0]->children[0]->data));
+								if (args->childrenNum==3) {//args:exp COMMA args
+									args = args->children[2];
+								}
+								else{
+									args = NULL;
+								}
 							}
-
 							printf("], align %d\n",atoi(num->data)*2);
 						}
 
@@ -196,7 +201,13 @@ void translate(Node * root,ParaQueue * paraQueue){
 		}
 	}
 	else if (!strcmp(root->data,"def")) {//def 	:spec decs SEMI
-		translate(root->children[1])
+		Node * dec=root->children[1]->children[0];
+
+		if (dec->childrenNum==1) {//dec : var
+			if (dec->children[0]->childrenNum==1) {//var:ID
+				printf("@%s = alloca i32 , align 4\n",dec->children[0]->children[0]->data);
+			}
+		}
 	}
 	// else if (/* condition */) {
 	// 	/* code */
