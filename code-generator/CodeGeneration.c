@@ -54,16 +54,38 @@ void translate(Node * root,ParaQueue * paraQueue){
 				Node * extvars = root->children[1];
 				while (strcmp(extvars->children[0]->data,"empty")!=0&&extvars!=NULL) {//dec exist
 					Node * dec = extvars->children[0];
+
 					if (dec->childrenNum==1) {//dec:var
+
 						if (dec->children[0]->childrenNum==1) {//var:ID
 							printf("@%s = common global i32 0, align 4\n",dec->children[0]->children[0]->data);
 						}
+
 						else{//var:var LB INT RB assume only one-dimensinal array
-							
+							Node * id = dec->children[0]->children[0]->children[0];
+							Node * num = dec->children[0]->children[2];
+							printf("@%s = common global [ %d x i32] zeroinitializer, align %d\n",id->data,atoi(num->data),atoi(num->data)*4);
 						}
 
 					}
 					else{//dec:var ASSIGNOP init
+						Node * init = dec->children[2];
+						if (dec->childrenNum==1) {//var :ID
+							printf("@%s = global i32 %d, align 4\n",dec->children[0]->children[0]->data,atoi(init->children[0]->children[0]->data));//init :exp,exp:ID
+						}
+						else{//var:var LB INTEGER RB
+							Node * id = dec->children[0]->children[0]->children[0];
+							Node * num = dec->children[0]->children[2];
+
+							printf("@%s = global [%d x i32] [",id->data,atoi(num->data));
+							//init : LC args RC
+							Node * args = init->children[1];
+							while (args) {
+								printf("i32 %d",atoi(args->children[0]->children[0]->data));
+							}
+
+							printf("], align %d\n",atoi(num->data)*4);
+						}
 
 					}
 				}
