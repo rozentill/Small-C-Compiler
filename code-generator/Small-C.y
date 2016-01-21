@@ -66,7 +66,7 @@ spec    :TYPE{$$=newNode("spec",1,newNode("TYPE",1,newNode("int",0)));}
 	|stspec{$$=newNode("spec",1,$1);}
 	;
 stspec  :STRUCT opttag LC defs RC{$$=newNode("stspec",5,newNode("struct",0),$2,newNode("{",0),$4,newNode("}",0));}
-	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode(yylval.sIndex,0));}
+	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode($2,0));}
 	;
 opttag  :ID{$$=newNode("opttag",1,newNode(yylval.sIndex,0));}
 	|{$$=newNode("opttag",1,newNode("empty",0));}

@@ -21,7 +21,7 @@ void codeGen(Node * root,FILE * fout){
 	paraQueue->size = 10;
 	paraQueue->num = 0;
 	paraQueue->queue = (char **)malloc(sizeof(char *)*10);
-	
+
 	translate(root,paraQueue);
 
 	//free memory allocated
@@ -31,7 +31,7 @@ void codeGen(Node * root,FILE * fout){
 
 void translate(Node * root,ParaQueue * paraQueue){
 	if(!strcmp(root->data,"program")){//program
-		printf("program is fine\n"); 
+		printf("program is fine\n");
 		translate(root->children[0],paraQueue);
 
 	}
@@ -55,17 +55,38 @@ void translate(Node * root,ParaQueue * paraQueue){
 			}
 			else if (!strcmp(root->children[0]->children[0]->data,"stspec")){//spec:stspec
 				Node * stspec = root->children[0]->children[0];
-				if (stspec->childrenNum==5)//STRUCT opttag LC defs RC
+				Node * extvars = root->children[1];
+
+				if (stspec->childrenNum==5)//stspec:STRUCT opttag LC defs RC
 				{
 					printf("%%struct.%s = type { ",stspec->children[1]->children[0]->data);
 
-					defs = stspec->children[3];
-					if (defs->childrenNum==2)//defs:def defs
-					{
-						
+					Node * defs = stspec->children[3];
+					while (defs!=NULL) {
+						printf("i32");
+						if (defs->childrenNum==2)//defs:def defs
+						{
+							defs=defs->children[1];
+						}
+						else{
+							defs = NULL;
+						}
 					}
 
 					printf(" } \n");
+
+					while(strcmp(extvars->children[0]->data,"empty")!=0&&extvars!=NULL) {
+						printf("@%s = common global %%struct.%s zeroinitializer, align 4\n",extvars->children[0]->children[0]->children[0]->data,stspec->children[1]->children[0]->data);
+						if (extvars->childrenNum==3) {
+							extvars = extvars->children[2];
+						}
+						else{
+							extvars = NULL;
+						}
+					}
+				}
+				else{//stspec:STRUCT ID
+					@%s = common global %%struct.%s zeroinitializer, align 4\n
 				}
 			}
 		}
@@ -116,15 +137,15 @@ void translate(Node * root,ParaQueue * paraQueue){
 		translate(root->children[1],paraQueue);//defs
 		translate(root->children[2],paraQueue);//stmts
 
-		printf("}\n");	
+		printf("}\n");
 	}
 	else if (!strcmp(root->data,"defs")) {//defs:def defs
 		if(!strcmp(root->children[0]->data,"empty")){
 			return;
 		}
 		else{
-			translate(root->children[0],null);
-			translate(root->children[1],null);
+			translate(root->children[0],NULL);
+			translate(root->children[1],NULL);
 		}
 	}
 	else if (!strcmp(root->data,"def")) {//def 	:spec decs SEMI
@@ -145,5 +166,3 @@ void translate(Node * root,ParaQueue * paraQueue){
 
 
 }
-
-
