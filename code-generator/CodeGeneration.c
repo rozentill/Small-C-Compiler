@@ -51,6 +51,22 @@ void translate(Node * root,ParaQueue * paraQueue){
 		}
 		else{//spec extvars SEMI
 			if(!strcmp(root->children[0]->children[0]->data,"TYPE")){//spec : TYPE
+				Node * extvars = root->children[1];
+				while (strcmp(extvars->children[0]->data,"empty")!=0&&extvars!=NULL) {//dec exist
+					Node * dec = extvars->children[0];
+					if (dec->childrenNum==1) {//dec:var
+						if (dec->children[0]->childrenNum==1) {//var:ID
+							printf("@%s = common global i32 0, align 4\n",dec->children[0]->children[0]->data);
+						}
+						else{//var:var LB INT RB assume only one-dimensinal array
+							
+						}
+
+					}
+					else{//dec:var ASSIGNOP init
+
+					}
+				}
 
 			}
 			else if (!strcmp(root->children[0]->children[0]->data,"stspec")){//spec:stspec
@@ -67,6 +83,7 @@ void translate(Node * root,ParaQueue * paraQueue){
 						if (defs->childrenNum==2)//defs:def defs
 						{
 							defs=defs->children[1];
+							printf(",");
 						}
 						else{
 							defs = NULL;
@@ -86,7 +103,15 @@ void translate(Node * root,ParaQueue * paraQueue){
 					}
 				}
 				else{//stspec:STRUCT ID
-					@%s = common global %%struct.%s zeroinitializer, align 4\n
+					while(strcmp(extvars->children[0]->data,"empty")!=0&&extvars!=NULL) {
+						printf("@%s = common global %%struct.%s zeroinitializer, align 4\n",extvars->children[0]->children[0]->children[0]->data,stspec->children[1]->data);
+						if (extvars->childrenNum==3) {
+							extvars = extvars->children[2];
+						}
+						else{
+							extvars = NULL;
+						}
+					}
 				}
 			}
 		}
