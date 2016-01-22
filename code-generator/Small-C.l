@@ -73,7 +73,7 @@ end [ \t]+$
 {cont} {return CONT;}
 {for} {return FOR;}
 {read} {return READ;}
-{write} {return write;}
+{write} {return WRITE;}
 {semi} {return SEMI;}
 {comma} {return COMMA;}
 {dot} {return DOT;}
