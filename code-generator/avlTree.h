@@ -5,6 +5,11 @@ typedef struct AVLTreeNode{
   char type;
   char * name;
 
+  int strMem;
+  int strName;
+
+  int arrSize;
+
   int h;//Height
   struct AVLTreeNode * l;//left child
   struct AVLTreeNode * r;//right child
@@ -80,8 +85,27 @@ AVLTree * Insert(PAVLNode * X, AVLTree * T )
                     else
                         T = DoubleRotateWithRight( T );//右边左子树
             }
+
             
             /* Else X is in the tree already; we'll do nothing */
             T->h = MAX( Height( T->l ), Height( T->r ) ) + 1;
             return T;
+}
+
+PAVLNode * Find(char * name,AVLTree * root){
+    if (strcmp(name,root->name)<0)
+    {
+        Find(name,root->l);
+    }
+    else if (strcmp(name,root->name)>0)
+    {
+        Find(name,root->r);
+    }
+    else if (strcmp(name,root->name)==0)
+    {
+        return root;
+    }
+    else {
+        return NULL;
+    }
 }
