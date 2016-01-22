@@ -19,7 +19,16 @@ typedef struct AVLTreeNode{
 typedef PAVLNode AVLTree;
 
 int MAX(int a,int b){return (a>b)?a:b;}
-int Height(PAVLNode * x){return x->h;}
+int Height(PAVLNode * x){
+    if (x==NULL)
+    {
+        return 0 ;
+    }
+    else{
+        return x->h;
+    }
+    
+}
 
 AVLTree * SingleRotateWithLeft(PAVLNode * k2)
 {
@@ -65,6 +74,8 @@ AVLTree * Insert(PAVLNode * X, AVLTree * T )
             {
                 /* Create and return a one-node tree */
                 T = X;
+                T->h = 0;
+                return T;
 
             }
             else if(strcmp(X->name,T->name)<0)//插入情况1
