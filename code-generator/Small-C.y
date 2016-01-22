@@ -99,7 +99,7 @@ stmt    :exps SEMI{$$=newNode("stmt",1,$1);}//finished
   |READ LP exp RP SEMI{$$=newNode("stmt",4,newNode("read",0),newNode("(",0),$3,newNode(")",0));}
   |WRITE  LP exp RP SEMI{$$=newNode("stmt",4,newNode("write",0),newNode("(",0),$3,newNode(")",0));}
 	;
-estmt   :ELSE stmt{$$=newNode("estmt",2,newNode("else",0),$2);}
+estmt   :ELSE stmt{$$=newNode("estmt",2,newNode("else",0),$2);}//finished
 	|{$$=newNode("estmt",1,newNode("empty",0));}
 	;
 defs    :def defs{$$=newNode("defs",2,$1,$2);}

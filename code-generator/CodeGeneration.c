@@ -247,7 +247,7 @@ void translate(Node * root,ParaQueue * paraQueue){
 		if (!strcmp(root->children[0]->data,"exps")) {
 			translate(root->children[0],paraQueue);
 		}
-		else if (!strcmp(root->children[0]->data,"stmtblock") {
+		else if (!strcmp(root->children[0]->data,"stmtblock")) {
 			// entryDepth++;
 			translate(root->children[0],paraQueue);
 			// entryDepth--;
@@ -390,7 +390,12 @@ void translate(Node * root,ParaQueue * paraQueue){
 		}
 	}
 	else if (!strcmp(root->data,"exps")) {//exps
-		
+		if (!strcmp(root->children[0]->data,"empty")) {//exps:empty
+			return;
+		}
+		else {
+			translate_exp(root->children[0]);//exp
+		}
 	}
 	// else if (/* condition */) {
 	// 	/* code */
@@ -400,5 +405,11 @@ void translate(Node * root,ParaQueue * paraQueue){
 }
 
 char * translate_exp(Node * root){
-
+		if (root->childrenNum==1) //exp:INT
+    {
+        return root->children[0]->data;
+    }
+		else if (/* condition */) {
+			/* code */
+		}
 }
