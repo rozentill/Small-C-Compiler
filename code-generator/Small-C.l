@@ -51,6 +51,8 @@ else else
 break break
 cont continue
 for for
+read read
+write write
 newline [\n]
 delium [ \t\v\f]
 whitespace {delium}+
@@ -70,6 +72,8 @@ end [ \t]+$
 {break} {return BREAK;}
 {cont} {return CONT;}
 {for} {return FOR;}
+{read} {return READ;}
+{write} {return write;}
 {semi} {return SEMI;}
 {comma} {return COMMA;}
 {dot} {return DOT;}

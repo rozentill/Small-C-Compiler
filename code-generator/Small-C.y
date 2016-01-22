@@ -31,7 +31,7 @@ FILE * yyout;
 %token <iPunctuation> SEMI COMMA LC RC
 %token <sValue> INT
 %token <sIndex> ID
-%token <sString> TYPE STRUCT RETURN IF ELSE BREAK CONT FOR
+%token <sString> TYPE STRUCT RETURN IF ELSE BREAK CONT FOR READ WRITE
 %right <sOperator> ASSIGNOP
 %left <sOperator> BOP10
 %left <sOperator> BOP9
@@ -82,20 +82,22 @@ paras   :para COMMA paras{$$=newNode("paras",3,$1,newNode(",",0),$3);}//finished
 	;
 para    :spec var{$$=newNode("para",2,$1,$2);}//finished
 	;
-funcstmtblock:LC defs stmts RC{$$=newNode("funcstmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}
+funcstmtblock:LC defs stmts RC{$$=newNode("funcstmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}//finished
 	;
-stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}
+stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}//finished
 	;
-stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}
+stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}//finished
 	|{$$=newNode("stmts",1,newNode("empty",0));}
 	;
-stmt    :exps SEMI{$$=newNode("stmt",1,$1);}
+stmt    :exps SEMI{$$=newNode("stmt",1,$1);}//finished
 	|stmtblock{$$=newNode("stmt",1,$1);}
 	|RETURN exps SEMI{$$=newNode("stmt",2,newNode("return",0),$2);}
 	|IF LP exp RP stmt estmt{$$=newNode("stmt",6,newNode("if",0),newNode("(",0),$3,newNode(")",0),$5,$6);}
 	|FOR LP exps SEMI exps SEMI exps RP stmt{$$=newNode("stmt",7,newNode("for",0),newNode("(",0),$3,$5,$7,newNode(")",0),$9);}
 	|CONT SEMI{$$=newNode("stmt",1,newNode("continue",0));}
 	|BREAK SEMI{$$=newNode("stmt",1,newNode("break",0));}
+  |READ LP exp RP SEMI{$$=newNode("stmt",4,newNode("read",0),newNode("(",0),$3,newNode(")",0));}
+  |WRITE  LP exp RP SEMI{$$=newNode("stmt",4,newNode("write",0),newNode("(",0),$3,newNode(")",0));}
 	;
 estmt   :ELSE stmt{$$=newNode("estmt",2,newNode("else",0),$2);}
 	|{$$=newNode("estmt",1,newNode("empty",0));}
