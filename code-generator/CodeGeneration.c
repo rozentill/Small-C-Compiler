@@ -35,8 +35,12 @@ void codeGen(Node * root,FILE * fout){
 	paraQueue->num = 0;
 	paraQueue->queue = (char **)malloc(sizeof(char *)*10);
 
+	printf("@.str = private unnamed_addr constant [3 x i8] c\"%%d\\00\", align 1\n");
+	printf("@.str1 = private unnamed_addr constant [2 x i8] c\"\\0A\\00\", align 1\n");
 	translate(root,paraQueue);
-
+	printf("declare i32 @__isoc99_scanf(i8*, ...) #2\ndeclare i32 @printf(i8*, ...) #2\n");
+	printf("attributes #0 = { nounwind uwtable \"less-precise-fpmad\"=\"false\" \"no-frame-pointer-elim\"=\"true\" \"no-frame-pointer-elim-non-leaf\" \"no-infs-fp-math\"=\"false\" \"no-nans-fp-math\"=\"false\" \"stack-protector-buffer-size\"=\"8\" \"unsafe-fp-math\"=\"false\" \"use-soft-float\"=\"false\" }");
+	
 	//free memory allocated
 	free(paraQueue->queue);
 	free(paraQueue);
@@ -252,10 +256,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		}
 
 		paraNum = 0;
-
+		char * tmpPara;
 		while (paraQueue->end!=paraQueue->start) {
 			paraNum++;
-			printf("  store i32 %%%s, i32* %%%d, align 4\n",dequeue(paraQueue),paraNum);
+			tmpPara = dequeue(paraQueue);
+			printf("  %%%s.addr = alloca i32, align 4\n",tmpPara);
+			printf("  store i32 %%%s, i32* %%%d, align 4\n",tmpPara,paraNum);
 		}
 
 		translate(root->children[1],paraQueue);//defs
@@ -415,15 +421,15 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	            }
 
 
-	            printf("  br i1 %s, label %%if%d.then, label %%if%d.else\n\n",tmp, ifNum, ifNum);
+	            printf("  br i1 %s, label %%if%d.then, label %%if%d.else\n",tmp, ifNum, ifNum);
 
 	            printf("if%d.then:\n",ifNum);
 							translate(root->children[4],paraQueue);
-	            printf("  br label %%if%d.end\n\n",ifNum);
+	            printf("  br label %%if%d.end\n",ifNum);
 
 	            printf("if%d.else:\n",ifNum);
 							translate(root->children[5]->children[1],paraQueue);
-	            printf("  br label %%if%d.end\n\n",ifNum);
+	            printf("  br label %%if%d.end\n",ifNum);
 
 	            printf("if%d.end:\n",ifNum);
 
@@ -446,11 +452,11 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	            }
 
 
-	            printf("  br i1 %s, label %%if%d.then, label %%if%d.end\n\n",tmp, ifNum, ifNum);
+	            printf("  br i1 %s, label %%if%d.then, label %%if%d.end\n",tmp, ifNum, ifNum);
 
 	            printf("if%d.then:\n",ifNum);
 							translate(root->children[4],NULL);
-	            printf("  br label %%if%d.end\n\n",ifNum);
+	            printf("  br label %%if%d.end\n",ifNum);
 							printf("if%d.end:\n",ifNum);
 
 	            ifNum++;
@@ -461,7 +467,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 				//store i32 0, i32* %i, align 4
         //br label %for.cond
 				translate(root->children[2],paraQueue);
-        printf("  br label %%for%d.cond\n\n",forNum);
+        printf("  br label %%for%d.cond\n",forNum);
         printf("for%d.cond:\n",forNum);
         char* tmp ;
 
@@ -479,20 +485,20 @@ char * translate(Node * root,ParaQueue * paraQueue){
         {
             //%cmp = icmp sgt i32 %0, 16
             printf("  %%r%d = icmp ne i32 %s, 0\n",returnNum,tmp);
-            printf("  br i1 %%r%d, label %%for%d.body, label %%for%d.end\n\n",returnNum,forNum,forNum);
+            printf("  br i1 %%r%d, label %%for%d.body, label %%for%d.end\n",returnNum,forNum,forNum);
             returnNum++;
         }
-        else printf("  br i1 %s, label %%for%d.body, label %%for%d.end\n\n",tmp,forNum,forNum);
+        else printf("  br i1 %s, label %%for%d.body, label %%for%d.end\n",tmp,forNum,forNum);
 
         printf("for%d.body:\n",forNum);
 				translate(root->children[8],paraQueue);//stmt
 
-        printf("  br label %%for%d.inc\n\n",forNum);
+        printf("  br label %%for%d.inc\n",forNum);
         printf("for%d.inc:\n",forNum);
 
 				translate(root->children[6],paraQueue);
 
-        printf("  br label %%for%d.cond\n\n",forNum);
+        printf("  br label %%for%d.cond\n",forNum);
         printf("for%d.end:\n",forNum);
 
         forNum++;
@@ -517,7 +523,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
             }
 		}
 		else{//read
-						char* tmp;
+			char* tmp;
             ifLoad = 0;
             tmp = translate_exp(root->children[2]);
             ifLoad = 1;
@@ -698,7 +704,7 @@ char * translate_exp(Node * root){
             else arrsIndex = translate_exp(root->children[1]->children[1]);
 
             char* ret = (char*)malloc(sizeof(char)*60);
-            strcpy(ret,"%%arrayidx");
+            strcpy(ret,"%arrayidx");
 
             char num[10];
             sprintf(num, "%d", arridxNum++);
@@ -923,7 +929,7 @@ char * translate_exp(Node * root){
         printf("  %s = mul nsw i32 %s, %s\n",tmpReg,op1,op2);
         return tmpReg;
     }
-    else if (!strcmp(root->children[1]->data,"%%"))//MOD srem
+    else if (!strcmp(root->children[1]->data,"%"))//MOD srem
     {
         
         char* op1 = (char*)malloc(sizeof(char)*60);
@@ -1014,7 +1020,7 @@ char * translate_exp(Node * root){
         char num[10];
         sprintf(num, "%d", callNum++);
         char* tmpReg = (char*)malloc(sizeof(char)*60);
-        strcpy(tmpReg,"%%call");
+        strcpy(tmpReg,"%call");
         strcat(tmpReg,num);
 
         Node * id = root->children[0];
@@ -1022,10 +1028,11 @@ char * translate_exp(Node * root){
         printf("  %s = call i32 @%s(",tmpReg,id->data);
 		int i;
 
-		printf("i32 %%%s",dequeue(paraQueue));
+		
+		printf("i32 %s",dequeue(paraQueue));
 		while (paraQueue->end!=paraQueue->start) {
 			
-			printf(", i32 %%%s",dequeue(paraQueue));
+			printf(", i32 %s",dequeue(paraQueue));
 		}
 
         
