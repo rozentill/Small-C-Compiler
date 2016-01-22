@@ -6,7 +6,7 @@ typedef struct AVLTreeNode{
   char * name;
 
   int strMem;
-  int strName;
+  char * strName;
 
   int arrSize;
 

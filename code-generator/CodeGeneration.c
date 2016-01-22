@@ -17,16 +17,16 @@ int returnNum;
 int ifNum;
 int forNum;
 int callNum;
-int arridxNum
+int arridxNum;
 int ifLoad = 1;
 
-AVLTree * root;
+AVLTree * symbolRoot;
 
-void translate(Node * root,ParaQueue * paraQueue) ;
-void translate_exp(Node * root);
-
+char * translate(Node * root,ParaQueue * paraQueue) ;
+char * translate_exp(Node * root);
+void argsFunc(Node* root,ParaQueue * paraQueue);
 void codeGen(Node * root,FILE * fout){
-
+	
 	//initialize paraQueue
 	ParaQueue * paraQueue = (ParaQueue*)malloc(sizeof(ParaQueue));
 	paraQueue->start = 0;
@@ -76,7 +76,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 							tmp->name = dec->children[0]->children[0]->data;
 							tmp->type='g';
-							root=Insert(tmp,root);
+							symbolRoot=Insert(tmp,symbolRoot);
 
 						}
 
@@ -88,9 +88,9 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							//symbol tree
 							PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 							tmp->name = id->data;
-							tmp->arrSize = atoi(num->data)
+							tmp->arrSize = atoi(num->data);
 							tmp->type='g';
-							root=Insert(tmp,root);
+							symbolRoot=Insert(tmp,symbolRoot);
 						}
 
 					}
@@ -103,7 +103,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 							tmp->name = dec->children[0]->children[0]->data;
 							tmp->type='g';
-							root=Insert(tmp,root);
+							symbolRoot=Insert(tmp,symbolRoot);
 						}
 						else{//var:var LB INTEGER RB
 							Node * id = dec->children[0]->children[0]->children[0];
@@ -114,9 +114,9 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							//symbol tree
 							PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 							tmp->name = id->data;
-							tmp->arrSize = atoi(num->data)
+							tmp->arrSize = atoi(num->data);
 							tmp->type='g';
-							root=Insert(tmp,root);
+							symbolRoot=Insert(tmp,symbolRoot);
 
 							//init : LC args RC
 							Node * args = init->children[1];
@@ -154,7 +154,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 						tmp->name = defs->children[0]->children[1]->children[0]->children[0]->children[0]->data;
 						tmp->strMem = strMem++;
-						root=Insert(tmp,root);
+						symbolRoot=Insert(tmp,symbolRoot);
 
 						if (defs->childrenNum==2)//defs:def defs
 						{
@@ -187,7 +187,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						tmp->name = extvars->children[0]->children[0]->children[0]->data;
 						tmp->strName = stspec->children[1]->data;
 						tmp->type='g';
-						root=Insert(tmp,root);
+						symbolRoot=Insert(tmp,symbolRoot);
 
 						if (extvars->childrenNum==3) {
 							extvars = extvars->children[2];
@@ -230,7 +230,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 		tmp->name = root->children[1]->children[0]->data;
 		tmp->type='a';
-		root=Insert(tmp,root);
+		symbolRoot=Insert(tmp,symbolRoot);
 
 	}
 	else if (!strcmp(root->data,"funcstmtblock")) {//funcstmtblock:LC defs stmts RC
@@ -254,6 +254,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		printf("}\n");
 	}
 	else if (!strcmp(root->data,"defs")) {//defs:def defs
+		printf("hello\n");
 		if(!strcmp(root->children[0]->data,"empty")){
 			return;
 		}
@@ -273,7 +274,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 				PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 				tmp->name = dec->children[0]->children[0]->data;
 				tmp->type='l';
-				root=Insert(tmp,root);
+				symbolRoot=Insert(tmp,symbolRoot);
 
 
 			}
@@ -287,7 +288,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 				tmp->name = id->data;
 				tmp->type='l';
 				tmp->arrSize = atoi(num->data);
-				root=Insert(tmp,root);
+				symbolRoot=Insert(tmp,symbolRoot);
 			}
 		}
 		else{//dec:var ASSIGNOP init
@@ -300,7 +301,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 				PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
 				tmp->name = dec->children[0]->children[0]->data;
 				tmp->type='l';
-				root=Insert(tmp,root);
+				symbolRoot=Insert(tmp,symbolRoot);
 
 			}
 			else{//var : var LB INT RB ***数组定义赋值***
@@ -313,7 +314,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 				tmp->name = id->data;
 				tmp->type='l';
 				tmp->arrSize = atoi(num->data);
-				root=Insert(tmp,root);
+				symbolRoot=Insert(tmp,symbolRoot);
 
 				char * arrName = id->data;
 				int arrSize = tmp->arrSize;
@@ -352,7 +353,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	}
 	else if (!strcmp(root->data,"stmts")) {
 		if (!strcmp(root->children[0]->data,"empty")) {
-			return;
+			return NULL;
 		}
 		else{
 			translate(root->children[0],paraQueue);//stmt
@@ -371,18 +372,18 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		else if(!strcmp(root->children[0]->data,"return"))
 		{
 
-        char * tmp;
-        tmp = translate_exp(root->child[1]);
+        		char * tmp;
+        		tmp = translate(root->children[1],NULL);
 				printf("  %%%d = load i32, i32* %s, align 4\n",returnNum,tmp);
 				printf("  ret i32 %%%d\n",returnNum);
-        returnNum++;
+        		returnNum++;
 		}
 		else if (!strcmp(root->children[0]->data,"if")) {//IF LP exp RP stmt estmt
 			if (strcmp(root->children[5]->children[0]->data,"empty")!=0) //ESTMT not null
 	        {
 	            char* tmp = translate_exp(root->children[2]);
 
-	            if (!strcmp(root->children[2]->children[1],"."))//exp:exp DOT ID
+	            if (!strcmp(root->children[2]->children[1]->data,"."))//exp:exp DOT ID
 	            {
 	                char num[10];
 	                sprintf(num, "%d", returnNum++);
@@ -413,7 +414,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
 	            char* tmp=translate_exp(root->children[2]);
 
-	            if (!strcmp(root->children[2]->children[1],"."))//DOT, special case
+	            if (!strcmp(root->children[2]->children[1]->data,"."))//DOT, special case
 	            {
 	                char num[10];
 	                sprintf(num, "%d", returnNum++);
@@ -436,7 +437,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
 	        }//if end
 		}
-		else if (!strcmp(root->children[0]->data,"for") {//stmt:FOR LP exps SEMI exps SEMI exps RP stmt
+		else if (!strcmp(root->children[0]->data,"for")) {//stmt:FOR LP exps SEMI exps SEMI exps RP stmt
 				//store i32 0, i32* %i, align 4
         //br label %for.cond
 				translate(root->children[2],paraQueue);
@@ -466,7 +467,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
         printf("for%d.body:\n",forNum);
 				translate(root->children[8],paraQueue);//stmt
 
-        printf"  br label %%for%d.inc\n\n",forNum);
+        printf("  br label %%for%d.inc\n\n",forNum);
         printf("for%d.inc:\n",forNum);
 
 				translate(root->children[6],paraQueue);
@@ -626,7 +627,7 @@ char * translate_exp(Node * root){
             Node * id = root->children[0];
 	    	tmp1 = id->data;
 			PAVLNode * tmpNode;
-			tmpNode = Find(tmp1,root);
+			tmpNode = Find(tmp1,symbolRoot);
 
 			int i =0 ;
             switch (tmpNode->type)
@@ -651,7 +652,7 @@ char * translate_exp(Node * root){
             if (ifLoad)
             {
                 char num[10];
-                sprintf(num, "%d", rNum++);
+                sprintf(num, "%d", returnNum++);
                 char* tmpReg = (char*)malloc(sizeof(char)*60);
                 strcpy(tmpReg,"%%r");
                 strcat(tmpReg,num);
@@ -684,9 +685,9 @@ char * translate_exp(Node * root){
             strcat(ret,num);
 
             PAVLNode * tmpNode;
-			tmpNode = Find(tmp,root);
+			tmpNode = Find(tmp,symbolRoot);
 
-			
+			int i;
             
             switch (tmpNode->type)
             {
@@ -713,7 +714,7 @@ char * translate_exp(Node * root){
             if (ifLoad)
             {
                 char num[10];
-                sprintf(num, "%d", rNum++);
+                sprintf(num, "%d", returnNum++);
                 char* tmpReg = (char*)malloc(sizeof(char)*60);
                 strcpy(tmpReg,"%%r");
                 strcat(tmpReg,num);
@@ -728,51 +729,23 @@ char * translate_exp(Node * root){
     else if (!strcmp(root->children[1]->data,".")) ////EXP->EXP DOT THEID
     {
         //%0 = load i32* getelementptr inbounds (%struct.doubleO* @T, i32 0, i32 0), align 4
-        TreeNode* nodeId = p->child->child;
-
-        int dim1 = 0;
-		if(nodeId->name[0]<'A' || nodeId->name[0]>'z') dim1 = 26;
-		else dim1 = (nodeId->name[0]<='Z')? nodeId->name[0]-'A':nodeId->name[0]-'a';
-
-        int i=0;
-        while (strcmp(nodeId->name,symTable[dim1][i]->word)) //Error checking
-		{
-			i++;
-			if(i>=20) 
-			{
-				printf("line%d:error, struct undefined",p->Line);
-				exit(-1);
-			}
-		}
-
-        struct symbol* id = symTable[dim1][i];
-
+        Node * nodeId = root->children[0]->children[0];
+		
+		PAVLNode * tmpNode = Find(nodeId->data,symbolRoot);
+        
         char* op1 = (char*)malloc(sizeof(char)*200);
-        strcpy(op1,nodeId->name);
+        strcpy(op1,nodeId->data);
 
         char* opStr = (char*)malloc(sizeof(char)*200);
-        strcpy(opStr,id->structName); //opStr, doubleO
+        strcpy(opStr,tmpNode->strName); //opStr, doubleO
 
 
-        nodeId = p->child->brother->brother;
+        nodeId = root->children[2];
+
+
+        tmpNode = Find(nodeId->data,symbolRoot);
 		
-        dim1 = 0;
-		if(nodeId->name[0]<'A' || nodeId->name[0]>'z') dim1 = 26;
-		else dim1 = (nodeId->name[0]<='Z')? nodeId->name[0]-'A':nodeId->name[0]-'a';
-
-        i=0;
-        while (strcmp(nodeId->name,symTable[dim1][i]->word)) 
-		{
-			i++;
-			if(i>=20)
-			{
-				printf("line%d: struct has no such element.",p->Line);
-				exit(-1);
-			}
-		}
-        id = symTable[dim1][i];
-
-        int op2 = id->structMem; //op2, 0
+        int op2 = tmpNode->strMem; //op2, 0
 
         char* ret = (char*)malloc(sizeof(char)*200);
         strcpy(ret,"getelementptr inbounds (%struct.");
@@ -785,18 +758,282 @@ char * translate_exp(Node * root){
         strcat(ret,ind);
         strcat(ret,")");
 
-        if (loadFlag)
+        if (ifLoad)
         {
             char num[10];
-            sprintf(num, "%d", rNum++);
+            sprintf(num, "%d", returnNum++);
             char* tmpReg = (char*)malloc(sizeof(char)*200);
-            strcpy(tmpReg,"%r");
+            strcpy(tmpReg,"%%r");
             strcat(tmpReg,num);
 
-            fprintf(fout,"  %s = load i32, i32* %s, align 4\n",tmpReg,ret);
+            printf("  %s = load i32, i32* %s, align 4\n",tmpReg,ret);
             return tmpReg;
         }
         else return ret;
     }
+    else if (!strcmp(root->children[1]->data,"==")) //EXP->EXP == EXP
+    {
+        
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
 
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+		
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+        printf("  %s = icmp eq i32 %s, %s\n",tmpReg,op1,op2);
+		
+		return tmpReg;
+        
+    }
+    else if (!strcmp(root->children[1]->data,">")) //EXP->EXP GREATER EXP
+    {
+        
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+		
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+        printf("  %s = icmp sgt i32 %s, %s\n",tmpReg,op1,op2);
+		return tmpReg;
+        
+    }
+    else if (!strcmp(root->children[1]->data,"<")) //EXP->EXP LESS EXP
+    {
+        //%cmp = icmp sgt i32 %0, 16
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+		
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+        printf("  %s = icmp slt i32 %s, %s\n",tmpReg,op1,op2);
+		return tmpReg;
+
+    }
+    else if (!strcmp(root->children[1]->data,"&&")) //EXP->EXP LOGICAND EXP
+    {
+        //%cmp = icmp eq i32 %0, %1
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        int reg1 = returnNum, reg2 = returnNum+1; returnNum+=2;
+        printf("  %%r%d = icmp ne i32 %s, 0\n",reg1,op1);
+        printf("  %%r%d = icmp ne i32 %s, 0\n",reg2,op2);
+
+        int reg3 = returnNum; returnNum++;
+        printf("  %%r%d = and i1 %%r%d, %%r%d\n",reg3,reg1,reg2);
+
+        char num[10];
+        sprintf(num, "%d", reg3);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        return tmpReg;
+    }
+    else if (!strcmp(root->children[1]->data,"+")) //EXP ADD EXP
+    {
+        
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = add nsw i32 %s, %s\n",tmpReg,op1,op2);
+        return tmpReg;
+    }
+    else if (!strcmp(root->children[1]->data,"-")) //EXP -> EXP - Exp
+    {
+		
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = sub nsw i32 %s, %s\n",tmpReg,op1,op2);
+        return tmpReg;
+    }
+    else if (!strcmp(root->children[1]->data,"*")) //EXP MULT EXP
+    {
+        //%0 = load i32* %a, align 4
+        //%1 = load i32* %b, align 4
+        //%add = add nsw i32 %0, %1
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = mul nsw i32 %s, %s\n",tmpReg,op1,op2);
+        return tmpReg;
+    }
+    else if (!strcmp(root->children[1]->data,"%%"))//MOD srem
+    {
+        
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = srem i32 %s, %s\n",tmpReg,op1,op2);
+        return tmpReg;
+    }
+
+    else if (!strcmp(root->children[1]->data,"&"))//BITAND
+    {
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = and i32 %s, %s\n",tmpReg,op1,op2);
+  
+        sprintf(num, "%d", returnNum++);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = icmp ne i32 %%r%d, 0\n",tmpReg,returnNum-2);
+        return  tmpReg;
+    }
+    else if (!strcmp(root->children[1]->data,"^"))//BITXOR
+    {
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        op1 = translate_exp(root->children[0]);
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+
+        printf("  %s = xor i32 %s, %s\n",tmpReg,op1,op2);
+        return tmpReg;
+    }
+    else if (!strcmp(root->children[1]->data,">>=")) //EXP SHIFTRA EXP
+    {
+     
+        char* op1 = (char*)malloc(sizeof(char)*60);
+        ifLoad = 0;
+        op1 = translate_exp(root->children[0]);
+        ifLoad = 1;
+        char* op2 = (char*)malloc(sizeof(char)*60);
+        op2 = translate_exp(root->children[2]);
+
+       	printf("%%r%d = load i32, i32* %s, align 4\n",returnNum,op1);
+        printf("  %%r%d = ashr i32 %%r%d, %s\n",returnNum+1,returnNum,op2);
+        printf("  store i32 %%r%d, i32* %s, align 4\n",returnNum+1,op1);
+        returnNum+=2;
+        return NULL;
+    }
+    else if (!strcmp(root->children[2]->data,"args")) //ID LP ARGS RP
+    {
+
+    	ParaQueue * paraQueue = (ParaQueue*)malloc(sizeof(ParaQueue));
+		paraQueue->start = 0;
+		paraQueue->end = 0;
+		paraQueue->size = 10;
+		paraQueue->num = 0;
+		paraQueue->queue = (char **)malloc(sizeof(char *)*10);
+
+		translate(root,paraQueue);
+
+		
+
+        argsFunc(root->children[2],paraQueue);
+
+        char num[10];
+        sprintf(num, "%d", callNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%call");
+        strcat(tmpReg,num);
+
+        Node * id = root->children[0];
+
+        printf("  %s = call i32 @%s(",tmpReg,id->data);
+		int i;
+
+		printf("i32 %%%s",dequeue(paraQueue));
+		while (paraQueue->end!=paraQueue->start) {
+			
+			printf(", i32 %%%s",dequeue(paraQueue));
+		}
+
+        
+        printf(")\n");
+
+        //free memory allocated
+		free(paraQueue->queue);
+		free(paraQueue);
+
+        return tmpReg;
+    }
+
+}
+void argsFunc(Node* root,ParaQueue * paraQueue) //ARGS for function call
+{
+    if (root->childrenNum == 1) //EXP
+    {
+        char* tmp = (char*)malloc(sizeof(char)*60);
+        tmp = translate_exp(root->children[0]);
+        enqueue(paraQueue,tmp);
+    }
+    else //EXP COMMA ARGS
+    {
+        char* tmp = (char*)malloc(sizeof(char)*60);
+        tmp = translate_exp(root->children[0]);
+        enqueue(paraQueue,tmp);
+
+
+        argsFunc(root->children[2],paraQueue);
+    }
 }
