@@ -9,6 +9,7 @@ Code Generation Function Implementation
 #include <malloc.h>
 #include "treeNode.h"
 #include "paraQueue.h"
+#include "avlTree.h"
 
 
 //initialization
@@ -18,7 +19,10 @@ int forNum;
 int callNum;
 int ifLoad = 1;
 
+AVLTree * root;
+
 void translate(Node * root,ParaQueue * paraQueue) ;
+void translate_exp(Node * root);
 
 void codeGen(Node * root,FILE * fout){
 
@@ -37,7 +41,7 @@ void codeGen(Node * root,FILE * fout){
 	free(paraQueue);
 }
 
-void translate(Node * root,ParaQueue * paraQueue){
+char * translate(Node * root,ParaQueue * paraQueue){
 	if(!strcmp(root->data,"program")){//program
 		translate(root->children[0],paraQueue);
 
@@ -230,7 +234,7 @@ void translate(Node * root,ParaQueue * paraQueue){
 				Node * id = dec->children[0]->children[0]->children[0];
 				Node * num = dec->children[0]->children[2];
 				printf("  %%%s = alloca [ %d x i32], align 4\n",id->data,atoi(num->data));
-				Node * exps =
+
 			}
 		}
 	}
@@ -261,7 +265,7 @@ void translate(Node * root,ParaQueue * paraQueue){
 				printf("  ret i32 %%%d\n",returnNum);
         returnNum++;
 		}
-		else if (!strcmp(root->children[0]->data,"if") {//IF LP exp RP stmt estmt
+		else if (!strcmp(root->children[0]->data,"if")) {//IF LP exp RP stmt estmt
 				if (strcmp(root->children[5]->children[0]->data,"empty")!=0) //ESTMT not null
         {
             char* tmp = translate_exp(root->children[2]);
@@ -305,7 +309,7 @@ void translate(Node * root,ParaQueue * paraQueue){
                 strcpy(tReg,"%%r");
                 strcat(tReg,num);
 								printf("  %s = icmp ne i32 %s, 0\n",tReg,tmp);
-                strcpy(tmp,tmpReg);
+                strcpy(tmp,tReg);
             }
 
 
@@ -360,8 +364,8 @@ void translate(Node * root,ParaQueue * paraQueue){
 
         forNum++;
 		}
-		else if (!strcmp(root->children[0]->data,"write")) {
-						char* tmp = translate(root->children[2],paraQueue);
+		else if (!strcmp(root->children[0]->data,"write")) {//stmt:WRITE  LP exp RP SEMI
+						char* tmp = translate_exp(root->children[2]);
             int trans;
             if (strlen(tmp)>1 && (tmp[0]=='0' || (tmp[0]=='-' && tmp[1]=='0')))
             {
@@ -379,10 +383,10 @@ void translate(Node * root,ParaQueue * paraQueue){
                 callNum++;
             }
 		}
-		else{
+		else{//read
 						char* tmp;
             ifLoad = 0;
-            tmp = translate(root->children[2],paraQueue);
+            tmp = translate_exp(root->children[2]);
             ifLoad = 1;
 
             printf("  %%call%d = call i32 (i8*, ...)* @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8]* @.str, i32 0, i32 0), i32* %s)\n",callNum,tmp);
@@ -391,16 +395,16 @@ void translate(Node * root,ParaQueue * paraQueue){
 	}
 	else if (!strcmp(root->data,"exps")) {//exps
 		if (!strcmp(root->children[0]->data,"empty")) {//exps:empty
-			return;
+			return NULL;
 		}
 		else {
-			translate_exp(root->children[0]);//exp
+			return translate_exp(root->children[0]);//exp
 		}
 	}
 	// else if (/* condition */) {
 	// 	/* code */
 	// }
-
+	return NULL;
 
 }
 
@@ -409,7 +413,224 @@ char * translate_exp(Node * root){
     {
         return root->children[0]->data;
     }
-		else if (/* condition */) {
-			/* code */
-		}
+		else if (!strcmp(root->children[0]->data,"++")) //++
+    {
+
+        char* op ;
+        ifLoad = 0;
+        op = translate_exp(root->children[1]);
+        ifLoad = 1;
+
+        printf("  %%r%d = load i32, i32* %s, align 4\n",returnNum,op);
+        printf("  %%r%d = add nsw i32 %%r%d, 1\n",returnNum+1,returnNum);
+        printf("  store i32 %%r%d, i32* %s, align 4\n",returnNum+1,op);
+
+        returnNum+=2;
+        return NULL;
+    }
+		else if (!strcmp(root->children[0]->data,"--")) //--
+    {
+
+        char* op ;
+        ifLoad = 0;
+        op = translate_exp(root->children[1]);
+        ifLoad = 1;
+
+        printf("  %%r%d = load i32, i32* %s, align 4\n",returnNum,op);
+        printf("  %%r%d = sub nsw i32 %%r%d, 1\n",returnNum-1,returnNum);
+        printf("  store i32 %%r%d, i32* %s, align 4\n",returnNum-1,op);
+
+        returnNum+=2;
+        return NULL;
+    }
+
+		else if (!strcmp(root->children[0]->data,"-")) //-
+    {
+
+        char* op ;
+        ifLoad = 0;
+        op = translate_exp(root->children[1]);
+        ifLoad = 1;
+
+        printf("  %%r%d = load i32, i32* %s, align 4\n",returnNum,op);
+        printf("  %%r%d = sub nsw i32 0, %%r%d\n",returnNum+1,returnNum);
+
+        char num[10];
+        sprintf(num, "%d", returnNum+1);
+        char* tReg;
+        strcpy(tReg,"%%r");
+        strcat(tReg,num);
+
+        returnNum+=2;
+        return tReg;
+    }
+		else if (!strcmp(root->children[0]->data,"!")) //!
+    {
+
+        char* op = translate_exp(root->children[1]);
+
+        char num[10];
+        sprintf(num, "%d", returnNum++);
+        char* tmpReg = (char*)malloc(sizeof(char)*60);
+				char* tmpReg1 = (char*)malloc(sizeof(char)*60);
+				char* retReg = (char*)malloc(sizeof(char)*60);
+        strcpy(tmpReg,"%%r");
+        strcat(tmpReg,num);
+        printf("  %s = icmp ne i32 %s, 0\n",tmpReg,op);
+
+				strcpy(tmpReg1,tmpReg);
+        strcat(tmpReg1,"lnot");
+				printf("  %s = xor i1 %s, true\n",tmpReg1,tmpReg);
+				return tmpReg1;
+
+    }
+		else if (!strcmp(root->children[0]->data,"=")) //EXP->EXP ASSIGNOP EXP
+    {
+
+        char* op2 = translate_exp(root->children[2]);
+
+        ifLoad = 0;
+        char* op1 = translate_exp(root->children[0]);
+        ifLoad = 1;
+
+        printf("  store i32 %s, i32* %s, align 4\n",op2,op1);
+        return NULL;
+
+    }
+    else if (!strcmp(root->children[0]->data,"(")) //LP EXP RP
+    {
+        return translate_exp(root->children[1]);
+    }
+		else if (!strcmp(root->children[1]->data,"arrs")) //ID arrs
+    {
+        //printf("%s, %c",symTable[0][0]->word,symTable[0][0]->type);
+        //return symTable[0][0]->word;
+
+        Node * arrs = root->children[1];
+        if (arrs->childrenNum==1) //ARRS : empty, ID case
+        {
+            char* tmp = (char*)malloc(sizeof(char)*60);
+	    			char* tmp1 = (char*)malloc(sizeof(char)*60);
+            TreeNode* nodeId = p->child;
+	    			strcpy(tmp1,nodeId->name);
+						int dim1 = 0;
+						if(nodeId->name[0]<'A' || nodeId->name[0]>'z') dim1 = 26;
+						else dim1 = (nodeId->name[0]<='Z')? nodeId->name[0]-'A':nodeId->name[0]-'a';
+
+            int i=0;
+            while (strcmp(nodeId->name,symTable[dim1][i]->word))
+						{
+						i++;
+						if(i>=20)
+						{
+							printf("line%d: no such IDENTIFIER",p->Line);
+							exit(-1);
+						}
+						}
+            struct symbol* id = symTable[dim1][i];
+            switch (id->type)
+            {
+                case 'g':
+		for (i=strlen(tmp1);i>=0;i--) tmp[i+1] = tmp1[i];
+                tmp[0] = '@';
+                break;
+
+                case 'l':
+                tmp[0] = '%';
+				strcat(tmp,tmp1);
+                break;
+
+                case 'a':
+                tmp[0] = '%';
+				strcat(tmp,tmp1);
+                strcat(tmp,".addr");
+                break;
+            }
+	    free(tmp1);
+            if (loadFlag)
+            {
+                char num[10];
+                sprintf(num, "%d", rNum++);
+                char* tmpReg = (char*)malloc(sizeof(char)*60);
+                strcpy(tmpReg,"%r");
+                strcat(tmpReg,num);
+
+                fprintf(fout,"  %s = load i32, i32* %s, align 4\n",tmpReg,tmp);
+                return tmpReg;
+            }
+            else return tmp;
+        }
+        else //we need to return arrindex
+        {
+            char* tmp = (char*)malloc(sizeof(char)*60);
+            TreeNode* nodeId = p->child;
+            strcpy(tmp,nodeId->name);
+
+            char* arrsIndex = (char*)malloc(sizeof(char)*60);
+            if (loadFlag==0)
+            {
+                loadFlag = 1;
+                arrsIndex = Exp(p->child->brother->child->brother); //what we obtained could be register or INT
+                loadFlag = 0;
+            }
+            else arrsIndex = Exp(p->child->brother->child->brother);
+
+            char* ret = (char*)malloc(sizeof(char)*60);
+            strcpy(ret,"%arrayidx");
+
+            char num[10];
+            sprintf(num, "%d", arridxNum++);
+            strcat(ret,num);
+
+			int dim1 = 0;
+			if(nodeId->name[0]<'A' || nodeId->name[0]>'z') dim1 = 26;
+			else dim1 = (nodeId->name[0]<='Z')? nodeId->name[0]-'A':nodeId->name[0]-'a';
+
+            int i=0;
+            while (strcmp(tmp,symTable[dim1][i]->word))
+			{
+				i++;
+				if(i>=20)
+				{
+					printf("line%d: error! can't find the array", p->Line);
+				}
+			}
+            struct symbol* id = symTable[dim1][i];
+            switch (id->type)
+            {
+                case 'g':
+                for (i=strlen(tmp);i>=0;i--) tmp[i+1] = tmp[i];
+                tmp[0] = '@';
+                break;
+
+                case 'l':
+                for (i=strlen(tmp);i>=0;i--) tmp[i+1] = tmp[i];
+                tmp[0] = '%';
+                break;
+
+                case 'a':
+                for (i=strlen(tmp);i>=0;i--) tmp[i+1] = tmp[i];
+                tmp[0] = '%';
+                strcat(tmp,".addr");
+                break;
+            }
+
+            //%arrayidx4 = getelementptr inbounds [2 x i32]* %d, i32 0, i32 1
+            fprintf(fout,"  %s = getelementptr inbounds [%d x i32]* %s, i32 0, i32 %s\n",ret,id->arrSize,tmp,arrsIndex);
+
+            if (loadFlag)
+            {
+                char num[10];
+                sprintf(num, "%d", rNum++);
+                char* tmpReg = (char*)malloc(sizeof(char)*60);
+                strcpy(tmpReg,"%r");
+                strcat(tmpReg,num);
+
+                fprintf(fout,"  %s = load i32, i32* %s, align 4\n",tmpReg,ret);
+                return tmpReg;
+            }
+            else return ret;
+        }
+    }
+
 }
