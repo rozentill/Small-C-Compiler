@@ -10,4 +10,4 @@ make clean
 make
 cd ..
 mv ./parser/Parser Parser
-mv ./code-generator/Code-Generator Code-Generator
+mv ./code-generator/Code-Generator scc
