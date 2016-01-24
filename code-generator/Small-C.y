@@ -89,8 +89,7 @@ stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode
 stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}//finished
 	|{$$=newNode("stmts",1,newNode("empty",0));}
 	;
-stmt    :exps SEMI{$$=newNode("stmt",1,$1);}//finished
-	|stmtblock{$$=newNode("stmt",1,$1);}
+stmt    :stmtblock{$$=newNode("stmt",1,$1);}
 	|RETURN exps SEMI{$$=newNode("stmt",2,newNode("return",0),$2);}
 	|IF LP exp RP stmt estmt{$$=newNode("stmt",6,newNode("if",0),newNode("(",0),$3,newNode(")",0),$5,$6);}
 	|FOR LP exps SEMI exps SEMI exps RP stmt{$$=newNode("stmt",7,newNode("for",0),newNode("(",0),$3,$5,$7,newNode(")",0),$9);}
@@ -98,12 +97,13 @@ stmt    :exps SEMI{$$=newNode("stmt",1,$1);}//finished
 	|BREAK SEMI{$$=newNode("stmt",1,newNode("break",0));}
   |READ LP exp RP SEMI{$$=newNode("stmt",4,newNode("read",0),newNode("(",0),$3,newNode(")",0));}
   |WRITE  LP exp RP SEMI{$$=newNode("stmt",4,newNode("write",0),newNode("(",0),$3,newNode(")",0));}
+  |exps SEMI{$$=newNode("stmt",1,$1);}//finished
 	;
 estmt   :ELSE stmt{$$=newNode("estmt",2,newNode("else",0),$2);}//finished
 	|{$$=newNode("estmt",1,newNode("empty",0));}
 	;
-defs    :def defs{$$=newNode("defs",2,$1,$2);}
-	|{$$=newNode("defs",1,newNode("empty",0));}
+defs    :{$$=newNode("defs",1,newNode("empty",0));}
+	|def defs{$$=newNode("defs",2,$1,$2);}
 	;
 def 	:spec decs SEMI{$$=newNode("def",2,$1,$2);}
 	;

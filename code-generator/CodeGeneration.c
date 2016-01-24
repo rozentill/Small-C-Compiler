@@ -19,6 +19,7 @@ int forNum;
 int callNum;
 int arridxNum;
 int ifLoad = 1;
+int entry = 0;
 
 AVLTree * symbolRoot;
 
@@ -88,7 +89,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						else{//var:var LB INT RB assume only one-dimensinal array
 							Node * id = dec->children[0]->children[0]->children[0];
 							Node * num = dec->children[0]->children[2];
-							printf("@%s = common global [ %d x i32] zeroinitializer, align %d\n",id->data,atoi(num->data),atoi(num->data)*2);
+							printf("@%s = common global [ %d x i32] zeroinitializer, align %d\n",id->data,atoi(num->data),16);
 							
 							//symbol tree
 							PAVLNode * tmp = (PAVLNode*)malloc(sizeof(PAVLNode));
@@ -164,15 +165,17 @@ char * translate(Node * root,ParaQueue * paraQueue){
 			else if (!strcmp(root->children[0]->children[0]->data,"stspec")){//spec:stspec
 				Node * stspec = root->children[0]->children[0];
 				Node * extvars = root->children[1];
+				
 
 				if (stspec->childrenNum==5)//stspec:STRUCT opttag LC defs RC
 				{
-					
+
 					int strMem=0;
 					printf("%%struct.%s = type { ",stspec->children[1]->children[0]->data);
 
 					Node * defs = stspec->children[3];
-					while (defs!=NULL) {
+					while (defs!=NULL&&strcmp(defs->children[0]->data,"empty")) {
+
 						printf("i32");
 						
 						//symbol tree
@@ -184,9 +187,14 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						if (defs->childrenNum==2)//defs:def defs
 						{
 							defs=defs->children[1];
-							printf(",");
+							if (strcmp(defs->children[0]->data,"empty"))
+							{
+								printf(",");
+							}
+							
 						}
 						else{
+
 							defs = NULL;
 						}
 					}
@@ -204,7 +212,8 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					}
 				}
 				else{//stspec:STRUCT ID
-					while(strcmp(extvars->children[0]->data,"empty")!=0&&extvars!=NULL) {
+
+					while(extvars!=NULL&&strcmp(extvars->children[0]->data,"empty")!=0) {
 						printf("@%s = common global %%struct.%s zeroinitializer, align 4\n",extvars->children[0]->children[0]->children[0]->data,stspec->children[1]->data);
 						
 						//symbol tree
@@ -213,14 +222,16 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						tmp->strName = stspec->children[1]->data;
 						tmp->type='g';
 						symbolRoot=Insert(tmp,symbolRoot);
-
+						
 						if (extvars->childrenNum==3) {
 							extvars = extvars->children[2];
 						}
 						else{
 							extvars = NULL;
 						}
+						
 					}
+
 				}
 			}
 		}
@@ -259,20 +270,13 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
 	}
 	else if (!strcmp(root->data,"funcstmtblock")) {//funcstmtblock:LC defs stmts RC
-		int paraNum=0;
-
-		while (paraQueue->num>paraNum) {
-			paraNum++;
-			printf("  %%%d = alloca i32, align 4\n",paraNum);
-		}
-
-		paraNum = 0;
+		
 		char * tmpPara;
 		while (paraQueue->end!=paraQueue->start) {
-			paraNum++;
+			
 			tmpPara = dequeue(paraQueue);
 			printf("  %%%s.addr = alloca i32, align 4\n",tmpPara);
-			printf("  store i32 %%%s, i32* %%%d, align 4\n",tmpPara,paraNum);
+			printf("  store i32 %%%s, i32* %%%s.addr, align 4\n",tmpPara,tmpPara);
 		}
 
 		translate(root->children[1],paraQueue);//defs
@@ -354,7 +358,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					if (init->childrenNum==1)
 					{
 						char * val = translate_exp(init->children[0]);
-						printf("  %%arrayidx%d = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %d\n",arridxNum,arrSize,arrSize,arrName,arrPtr);
+						printf("  %%arrayidx%d = getelementptr inbounds [%d x i32]* %%%s, i64 0, i64 %d\n",arridxNum,arrSize,arrName,arrPtr);
 	        			printf("  store i32 %s, i32* %%arrayidx%d, align 4\n",val,arridxNum);
 	        			arridxNum++;
 	        			arrPtr = 0;
@@ -364,7 +368,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						Node * args = init->children[1];
 						while(args){
 							char * val = translate_exp(args->children[0]);
-							printf("  %%arrayidx%d = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %d\n",arridxNum,arrSize,arrSize,arrName,arrPtr);
+							printf("  %%arrayidx%d = getelementptr inbounds [%d x i32]* %%%s, i64 0, i64 %d\n",arridxNum,arrSize,arrName,arrPtr);
 		        			printf("  store i32 %s, i32* %%arrayidx%d, align 4\n",val,arridxNum);
 		        			arridxNum++;
 		        			arrPtr++;
@@ -403,12 +407,18 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	}
 	else if (!strcmp(root->data,"stmt")) {
 		if (!strcmp(root->children[0]->data,"exps")) {
+			
+
 			translate(root->children[0],paraQueue);
 		}
+		else if (!strcmp(root->children[0]->data,"exp"))
+		{
+			translate_exp(root->children[0]);
+		}
 		else if (!strcmp(root->children[0]->data,"stmtblock")) {
-			// entryDepth++;
+			entry++;
 			translate(root->children[0],paraQueue);
-			// entryDepth--;
+			entry--;
 		}
 		else if(!strcmp(root->children[0]->data,"return"))
 		{
@@ -420,16 +430,18 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		else if (!strcmp(root->children[0]->data,"if")) {//IF LP exp RP stmt estmt
 			if (strcmp(root->children[5]->children[0]->data,"empty")!=0) //ESTMT not null
 	        {
+	        	
 	            char* tmp = translate_exp(root->children[2]);
 
 	            if (!strcmp(root->children[2]->children[1]->data,"."))//exp:exp DOT ID
 	            {
+	          	
 	                char num[10];
 	                sprintf(num, "%d", returnNum++);
-									char* tReg;
+					char* tReg = (char *)malloc(sizeof(char)*60);
 	                strcpy(tReg,"%r");
 	                strcat(tReg,num);
-									printf("  %s = icmp ne i32 %s, 0\n",tReg,tmp);
+					printf("  %s = icmp ne i32 %s, 0\n",tReg,tmp);
 	                strcpy(tmp,tReg);
 	            }
 
@@ -437,7 +449,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	            printf("  br i1 %s, label %%if%d.then, label %%if%d.else\n",tmp, ifNum, ifNum);
 
 	            printf("if%d.then:\n",ifNum);
-							translate(root->children[4],paraQueue);
+				translate(root->children[4],paraQueue);
 	            printf("  br label %%if%d.end\n",ifNum);
 
 	            printf("if%d.else:\n",ifNum);
@@ -455,6 +467,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
 	            if (!strcmp(root->children[2]->children[1]->data,"."))//DOT, special case
 	            {
+
 	                char num[10];
 	                sprintf(num, "%d", returnNum++);
 	                char* tReg;
@@ -468,9 +481,9 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	            printf("  br i1 %s, label %%if%d.then, label %%if%d.end\n",tmp, ifNum, ifNum);
 
 	            printf("if%d.then:\n",ifNum);
-							translate(root->children[4],NULL);
+				translate(root->children[4],NULL);
 	            printf("  br label %%if%d.end\n",ifNum);
-							printf("if%d.end:\n",ifNum);
+				printf("if%d.end:\n",ifNum);
 
 	            ifNum++;
 
@@ -484,7 +497,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
         	printf("for%d.cond:\n",forNum);
         	char* tmp ;
 
-			Node * expsMiddle = root->children[4];
+			Node * expsMiddle = root->children[3];
 
         	tmp = translate(expsMiddle,paraQueue);
 
@@ -496,14 +509,15 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	            returnNum++;
         	}
 	        else printf("  br i1 %s, label %%for%d.body, label %%for%d.end\n",tmp,forNum,forNum);
-
+	      
 	        printf("for%d.body:\n",forNum);
-			translate(root->children[8],paraQueue);//stmt
+	        
+			translate(root->children[6],paraQueue);//stmt
 
 	        printf("  br label %%for%d.inc\n",forNum);
 	        printf("for%d.inc:\n",forNum);
 
-			translate(root->children[6],paraQueue);
+			translate(root->children[4],paraQueue);
 
 	        printf("  br label %%for%d.cond\n",forNum);
 	        printf("for%d.end:\n",forNum);
@@ -511,21 +525,19 @@ char * translate(Node * root,ParaQueue * paraQueue){
         	forNum++;
 		}
 		else if (!strcmp(root->children[0]->data,"write")) {//stmt:WRITE  LP exp RP SEMI
-						char* tmp = translate_exp(root->children[2]);
+			char* tmp = translate_exp(root->children[2]);
             int trans;
             if (strlen(tmp)>1 && (tmp[0]=='0' || (tmp[0]=='-' && tmp[1]=='0')))
             {
                 trans = strtol(tmp,NULL,0);
                 printf("  %%call%d = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([3 x i8]* @.str, i32 0, i32 0), i32 %d)\n",callNum,trans);
                 callNum++;
-                printf("  %%call%d = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([2 x i8]* @.str1, i32 0, i32 0))\n",callNum);
                 callNum++;
             }
             else
             {
                 printf("  %%call%d = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([3 x i8]* @.str, i32 0, i32 0), i32 %s)\n",callNum,tmp);
                 callNum++;
-                printf("  %%call%d = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([2 x i8]* @.str1, i32 0, i32 0))\n",callNum);
                 callNum++;
             }
 		}
@@ -546,20 +558,53 @@ char * translate(Node * root,ParaQueue * paraQueue){
 			return NULL;
 		}
 		else {
+
 			return translate_exp(root->children[0]);//exp
 		}
 	}
-	// else if (/* condition */) {
-	// 	/* code */
-	// }
+	else if (!strcmp(root->data,"stmtblock")) {
+		if (!entry)
+		{
+			printf("entry:\n");
+		}
+
+		Node * defs = root->children[1];
+		Node * stmts = root->children[2];
+
+		translate(defs,paraQueue);
+		translate(stmts,paraQueue);
+
+		if (!entry)
+		{
+			printf("}\n");
+		}
+
+	}
 	return NULL;
 
 }
 
 char * translate_exp(Node * root){
 		if (root->childrenNum==1) //exp:INT
-    {
+    {	
+
+    	Node * intnum = root->children[0];
+    	if (strlen(intnum->data)>=2)
+    	{
+    		if (intnum->data[0]=='0')//Ox or 0X
+    		{
+    			char * tmp = (char *)malloc(sizeof(char)*60);
+    			int trans;
+    			trans = strtol(intnum->data,NULL,0);
+    			sprintf(tmp,"%d",trans);
+    			return tmp;
+    		}
+    		else{
+    			return root->children[0]->data;
+    		}
+    	}
         return root->children[0]->data;
+
     }
 		else if (!strcmp(root->children[0]->data,"++")) //++
     {
@@ -594,23 +639,28 @@ char * translate_exp(Node * root){
 
 		else if (!strcmp(root->children[0]->data,"-")) //-
     {
+    	 
 
-        char* op ;
-        ifLoad = 0;
-        op = translate_exp(root->children[1]);
-        ifLoad = 1;
+        // char* op ;
+        // ifLoad = 0;
+        // op = translate_exp(root->children[1]);
+        // ifLoad = 1;
 
-        printf("  %%r%d = load i32* %s, align 4\n",returnNum,op);
-        printf("  %%r%d = sub nsw i32 0, %%r%d\n",returnNum+1,returnNum);
+        // printf("  %%r%d = load i32* %s, align 4\n",returnNum,op);
+        // printf("  %%r%d = sub nsw i32 0, %%r%d\n",returnNum+1,returnNum);
 
-        char num[10];
-        sprintf(num, "%d", returnNum+1);
-        char* tReg;
-        strcpy(tReg,"%r");
-        strcat(tReg,num);
+        // char num[10];
+        // sprintf(num, "%d", returnNum+1);
+        // char* tReg = (char*)malloc(sizeof(char)*60);;
+        // strcpy(tReg,"%r");
+        // strcat(tReg,num);
+        // returnNum+=2;
+        // return tReg;
 
-        returnNum+=2;
-        return tReg;
+        char* tmp = (char*)malloc(sizeof(char)*60);
+        strcpy(tmp,"-");
+		strcat(tmp,translate_exp(root->children[1]));
+        return tmp;
     }
 	else if (!strcmp(root->children[0]->data,"!")) //!
     {
@@ -624,19 +674,16 @@ char * translate_exp(Node * root){
 				char* retReg = (char*)malloc(sizeof(char)*60);
         strcpy(tmpReg,"%r");
         strcat(tmpReg,num);
-        printf("  %s = icmp ne i32 %s, 0\n",tmpReg,op);
+        printf("  %s = icmp eq i32 %s, 0\n",tmpReg,op);
 
-				strcpy(tmpReg1,tmpReg);
-        strcat(tmpReg1,"lnot");
-				printf("  %s = xor i1 %s, true\n",tmpReg1,tmpReg);
-				return tmpReg1;
+
+		return tmpReg;
 
     }
-	else if (!strcmp(root->children[0]->data,"=")) //EXP->EXP ASSIGNOP EXP
+	else if (!strcmp(root->children[1]->data,"=")) //EXP->EXP ASSIGNOP EXP
     {
 
         char* op2 = translate_exp(root->children[2]);
-
         ifLoad = 0;
         char* op1 = translate_exp(root->children[0]);
         ifLoad = 1;
@@ -662,8 +709,13 @@ char * translate_exp(Node * root){
 	    	tmp1 = id->data;
 			PAVLNode * tmpNode;
 			tmpNode = Find(tmp1,symbolRoot);
-
-
+			
+			/****Error:if not found****/
+			if (tmpNode==NULL)
+			{
+				fprintf(stderr, "Error:variable %s has not been declared\n",tmp1);
+				exit(-1);
+			}
 
 			int i =0 ;
             switch (tmpNode->type)
@@ -725,6 +777,13 @@ char * translate_exp(Node * root){
             PAVLNode * tmpNode;
 			tmpNode = Find(tmp,symbolRoot);
 
+			/****Error:if not found****/
+			if (tmpNode==NULL)
+			{
+				fprintf(stderr, "Error:variable %s has not been declared\n",tmp);
+				exit(-1);
+			}
+
 			int i;
             
             switch (tmpNode->type)
@@ -770,6 +829,13 @@ char * translate_exp(Node * root){
         Node * nodeId = root->children[0]->children[0];
 		
 		PAVLNode * tmpNode = Find(nodeId->data,symbolRoot);
+
+		/****Error:if not found****/
+		if (tmpNode==NULL)
+		{
+			fprintf(stderr, "Error:variable %s has not been declared\n",nodeId->data);
+			exit(-1);
+		}
         
         char* op1 = (char*)malloc(sizeof(char)*200);
         strcpy(op1,nodeId->data);
@@ -782,11 +848,19 @@ char * translate_exp(Node * root){
 
 
         tmpNode = Find(nodeId->data,symbolRoot);
+
+        /****Error:if not found****/
+		if (tmpNode==NULL)
+		{
+			fprintf(stderr, "Error:variable %s has not been declared\n",nodeId->data);
+			exit(-1);
+		}
 		
         int op2 = tmpNode->strMem; //op2, 0
 
         char* ret = (char*)malloc(sizeof(char)*200);
         strcpy(ret,"getelementptr inbounds (%struct.");
+        
         strcat(ret,opStr);
         strcat(ret,"* @");
         strcat(ret,op1);
@@ -808,6 +882,7 @@ char * translate_exp(Node * root){
             return tmpReg;
         }
         else return ret;
+
     }
     else if (!strcmp(root->children[1]->data,"==")) //EXP->EXP == EXP
     {
@@ -873,8 +948,8 @@ char * translate_exp(Node * root){
         op2 = translate_exp(root->children[2]);
 
         int reg1 = returnNum, reg2 = returnNum+1; returnNum+=2;
-        printf("  %%r%d = icmp ne i32 %s, 0\n",reg1,op1);
-        printf("  %%r%d = icmp ne i32 %s, 0\n",reg2,op2);
+        printf("  %%r%d = icmp ne i1 %s, 0\n",reg1,op1);
+        printf("  %%r%d = icmp ne i1 %s, 0\n",reg2,op2);
 
         int reg3 = returnNum; returnNum++;
         printf("  %%r%d = and i1 %%r%d, %%r%d\n",reg3,reg1,reg2);

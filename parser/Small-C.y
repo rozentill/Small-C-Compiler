@@ -19,10 +19,10 @@ FILE * yyin;
 FILE * yyout;
 %}
 %union {
-        char *  sValue;
-        int iPunctuation;
+  char *  sValue;
+  int iPunctuation;
 	char * sIndex;
-        char * sString;
+  char * sString;
 	char * sOperator;
 	struct treeNode * nNode;
 }
@@ -30,7 +30,7 @@ FILE * yyout;
 %token <iPunctuation> SEMI COMMA LC RC
 %token <sValue> INT
 %token <sIndex> ID
-%token <sString> TYPE STRUCT RETURN IF ELSE BREAK CONT FOR
+%token <sString> TYPE STRUCT RETURN IF ELSE BREAK CONT FOR READ WRITE
 %right <sOperator> ASSIGNOP
 %left <sOperator> BOP10
 %left <sOperator> BOP9
@@ -65,12 +65,12 @@ spec    :TYPE{$$=newNode("spec",1,newNode("TYPE",1,newNode("int",0)));}
 	|stspec{$$=newNode("spec",1,$1);}
 	;
 stspec  :STRUCT opttag LC defs RC{$$=newNode("stspec",5,newNode("struct",0),$2,newNode("{",0),$4,newNode("}",0));}
-	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode(yylval.sIndex,0));}
+	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode($2,0));}
 	;
-opttag  :ID{$$=newNode("opttag",1,newNode(yylval.sIndex,0));}
+opttag  :ID{$$=newNode("opttag",1,newNode($1,0));}
 	|{$$=newNode("opttag",1,newNode("empty",0));}
 	;
-var 	:ID{$$=newNode("var",1,newNode(yylval.sIndex,0));}
+var 	:ID{$$=newNode("var",1,newNode($1,0));}
 	|var LB INT RB{$$=newNode("var",4,$1,newNode("[",0),newNode($3,0),newNode("]",0));}
 	;
 func    :ID LP paras RP{$$=newNode("func",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}//finished
@@ -81,22 +81,24 @@ paras   :para COMMA paras{$$=newNode("paras",3,$1,newNode(",",0),$3);}//finished
 	;
 para    :spec var{$$=newNode("para",2,$1,$2);}//finished
 	;
-funcstmtblock:LC defs stmts RC{$$=newNode("funcstmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}
+funcstmtblock:LC defs stmts RC{$$=newNode("funcstmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}//finished
 	;
-stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}
+stmtblock:LC defs stmts RC{$$=newNode("stmtblock",4,newNode("{",0),$2,$3,newNode("}",0));}//finished
 	;
-stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}
+stmts   :stmt stmts{$$=newNode("stmts",2,$1,$2);}//finished
 	|{$$=newNode("stmts",1,newNode("empty",0));}
 	;
-stmt    :exp SEMI{$$=newNode("stmt",1,$1);}
-	|stmtblock{$$=newNode("stmt",1,$1);}
+stmt    :stmtblock{$$=newNode("stmt",1,$1);}
 	|RETURN exps SEMI{$$=newNode("stmt",2,newNode("return",0),$2);}
 	|IF LP exp RP stmt estmt{$$=newNode("stmt",6,newNode("if",0),newNode("(",0),$3,newNode(")",0),$5,$6);}
 	|FOR LP exps SEMI exps SEMI exps RP stmt{$$=newNode("stmt",7,newNode("for",0),newNode("(",0),$3,$5,$7,newNode(")",0),$9);}
 	|CONT SEMI{$$=newNode("stmt",1,newNode("continue",0));}
 	|BREAK SEMI{$$=newNode("stmt",1,newNode("break",0));}
+  |READ LP exp RP SEMI{$$=newNode("stmt",4,newNode("read",0),newNode("(",0),$3,newNode(")",0));}
+  |WRITE  LP exp RP SEMI{$$=newNode("stmt",4,newNode("write",0),newNode("(",0),$3,newNode(")",0));}
+  |exps SEMI{$$=newNode("stmt",1,$1);}//finished
 	;
-estmt   :ELSE stmt{$$=newNode("estmt",2,newNode("else",0),$2);}
+estmt   :ELSE stmt{$$=newNode("estmt",2,newNode("else",0),$2);}//finished
 	|{$$=newNode("estmt",1,newNode("empty",0));}
 	;
 defs    :def defs{$$=newNode("defs",2,$1,$2);}

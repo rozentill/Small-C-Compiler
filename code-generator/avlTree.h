@@ -104,7 +104,12 @@ AVLTree * Insert(PAVLNode * X, AVLTree * T )
 }
 
 PAVLNode * Find(char * name,AVLTree * root){
-    if (strcmp(name,root->name)<0)
+    if (root==NULL)
+    {
+        return NULL;
+    }
+
+    else if (strcmp(name,root->name)<0)
     {
         Find(name,root->l);
     }
@@ -116,7 +121,7 @@ PAVLNode * Find(char * name,AVLTree * root){
     {
         return root;
     }
-    else {
+    else{
         return NULL;
     }
 }
