@@ -100,8 +100,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
 					}
 					else{//dec:var ASSIGNOP init
+						
 						Node * init = dec->children[2];
-						if (dec->childrenNum==1) {//var :ID
+						Node * var = dec->children[0];
+						if (var->childrenNum==1) {//var :ID
+
+
 							printf("@%s = global i32 %d, align 4\n",dec->children[0]->children[0]->data,atoi(init->children[0]->children[0]->data));//init :exp,exp:ID
 							
 							//symbol tree
@@ -125,8 +129,15 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
 							//init : LC args RC
 							Node * args = init->children[1];
+							printf("i32 %d",atoi(args->children[0]->children[0]->data));
+							if (args->childrenNum==3) {//args:exp COMMA args
+								args = args->children[2];
+							}
+							else{
+								args = NULL;
+							}
 							while (args) {
-								printf("i32 %d",atoi(args->children[0]->children[0]->data));
+								printf(", i32 %d",atoi(args->children[0]->children[0]->data));
 								if (args->childrenNum==3) {//args:exp COMMA args
 									args = args->children[2];
 								}
@@ -336,6 +347,7 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					tmp->arrSize = atoi(num->data);
 					symbolRoot=Insert(tmp,symbolRoot);
 
+
 					char * arrName = id->data;
 					int arrSize = tmp->arrSize;
 					int arrPtr;
@@ -348,9 +360,10 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	        			arrPtr = 0;
 					}
 					else{
-						Node * args = init->children[2];
+						
+						Node * args = init->children[1];
 						while(args){
-							char * val = translate_exp(init->children[0]);
+							char * val = translate_exp(args->children[0]);
 							printf("  %%arrayidx%d = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %d\n",arridxNum,arrSize,arrSize,arrName,arrPtr);
 		        			printf("  store i32 %s, i32* %%arrayidx%d, align 4\n",val,arridxNum);
 		        			arridxNum++;
@@ -465,43 +478,37 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		}
 		else if (!strcmp(root->children[0]->data,"for")) {//stmt:FOR LP exps SEMI exps SEMI exps RP stmt
 				//store i32 0, i32* %i, align 4
-        //br label %for.cond
-				translate(root->children[2],paraQueue);
-        printf("  br label %%for%d.cond\n",forNum);
-        printf("for%d.cond:\n",forNum);
-        char* tmp ;
+        		//br label %for.cond
+			translate(root->children[2],paraQueue);
+        	printf("  br label %%for%d.cond\n",forNum);
+        	printf("for%d.cond:\n",forNum);
+        	char* tmp ;
 
-				Node * expsMiddle = root->children[4];
+			Node * expsMiddle = root->children[4];
 
-				// if(Exp2->child->brother == NULL)//ERROR checking.
-				// {
-				// 	fprintf(fout,"line%d:error! It will loop forever in the for(;;)!",p->Line);
-				// 	exit(-1);
-				// }
+        	tmp = translate(expsMiddle,paraQueue);
 
-        tmp = translate(expsMiddle,paraQueue);
+        	if (!strcmp(expsMiddle->children[0]->children[1]->data,"arrs")) //special case, ID ARRS
+        	{
+            	//%cmp = icmp sgt i32 %0, 16
+            	printf("  %%r%d = icmp ne i32 %s, 0\n",returnNum,tmp);
+	            printf("  br i1 %%r%d, label %%for%d.body, label %%for%d.end\n",returnNum,forNum,forNum);
+	            returnNum++;
+        	}
+	        else printf("  br i1 %s, label %%for%d.body, label %%for%d.end\n",tmp,forNum,forNum);
 
-        if (!strcmp(expsMiddle->children[1]->data,"arrs")) //special case, ID ARRS
-        {
-            //%cmp = icmp sgt i32 %0, 16
-            printf("  %%r%d = icmp ne i32 %s, 0\n",returnNum,tmp);
-            printf("  br i1 %%r%d, label %%for%d.body, label %%for%d.end\n",returnNum,forNum,forNum);
-            returnNum++;
-        }
-        else printf("  br i1 %s, label %%for%d.body, label %%for%d.end\n",tmp,forNum,forNum);
+	        printf("for%d.body:\n",forNum);
+			translate(root->children[8],paraQueue);//stmt
 
-        printf("for%d.body:\n",forNum);
-				translate(root->children[8],paraQueue);//stmt
+	        printf("  br label %%for%d.inc\n",forNum);
+	        printf("for%d.inc:\n",forNum);
 
-        printf("  br label %%for%d.inc\n",forNum);
-        printf("for%d.inc:\n",forNum);
+			translate(root->children[6],paraQueue);
 
-				translate(root->children[6],paraQueue);
+	        printf("  br label %%for%d.cond\n",forNum);
+	        printf("for%d.end:\n",forNum);
 
-        printf("  br label %%for%d.cond\n",forNum);
-        printf("for%d.end:\n",forNum);
-
-        forNum++;
+        	forNum++;
 		}
 		else if (!strcmp(root->children[0]->data,"write")) {//stmt:WRITE  LP exp RP SEMI
 						char* tmp = translate_exp(root->children[2]);
@@ -533,6 +540,8 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		}
 	}
 	else if (!strcmp(root->data,"exps")) {//exps
+
+
 		if (!strcmp(root->children[0]->data,"empty")) {//exps:empty
 			return NULL;
 		}
@@ -642,8 +651,7 @@ char * translate_exp(Node * root){
     }
 	else if (!strcmp(root->children[1]->data,"arrs")) //ID arrs
     {
-        //printf("%s, %c",symTable[0][0]->word,symTable[0][0]->type);
-        //return symTable[0][0]->word;
+        
 
         Node * arrs = root->children[1];
         if (arrs->childrenNum==1) //ARRS : empty, ID case
@@ -654,6 +662,8 @@ char * translate_exp(Node * root){
 	    	tmp1 = id->data;
 			PAVLNode * tmpNode;
 			tmpNode = Find(tmp1,symbolRoot);
+
+
 
 			int i =0 ;
             switch (tmpNode->type)
@@ -674,7 +684,8 @@ char * translate_exp(Node * root){
               	  	strcat(tmp,".addr");
                 	break;
             }
-	    
+
+
             if (ifLoad)
             {
                 char num[10];
@@ -686,6 +697,7 @@ char * translate_exp(Node * root){
                 printf("  %s = load i32* %s, align 4\n",tmpReg,tmp);
                 return tmpReg;
             }
+
             else return tmp;
         }
         else //we need to return arrindex
@@ -995,7 +1007,7 @@ char * translate_exp(Node * root){
         char* op2 = (char*)malloc(sizeof(char)*60);
         op2 = translate_exp(root->children[2]);
 
-       	printf("%%r%d = load i32* %s, align 4\n",returnNum,op1);
+       	printf("  %%r%d = load i32* %s, align 4\n",returnNum,op1);
         printf("  %%r%d = ashr i32 %%r%d, %s\n",returnNum+1,returnNum,op2);
         printf("  store i32 %%r%d, i32* %s, align 4\n",returnNum+1,op1);
         returnNum+=2;

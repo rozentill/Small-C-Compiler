@@ -68,10 +68,10 @@ spec    :TYPE{$$=newNode("spec",1,newNode("TYPE",1,newNode("int",0)));}
 stspec  :STRUCT opttag LC defs RC{$$=newNode("stspec",5,newNode("struct",0),$2,newNode("{",0),$4,newNode("}",0));}
 	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode($2,0));}
 	;
-opttag  :ID{$$=newNode("opttag",1,newNode(yylval.sIndex,0));}
+opttag  :ID{$$=newNode("opttag",1,newNode($1,0));}
 	|{$$=newNode("opttag",1,newNode("empty",0));}
 	;
-var 	:ID{$$=newNode("var",1,newNode(yylval.sIndex,0));}
+var 	:ID{$$=newNode("var",1,newNode($1,0));}
 	|var LB INT RB{$$=newNode("var",4,$1,newNode("[",0),newNode($3,0),newNode("]",0));}
 	;
 func    :ID LP paras RP{$$=newNode("func",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}//finished
