@@ -1,3 +1,7 @@
+/*
+Used to define avl tree to store symbol table
+*/
+
 #include <stdio.h>
 #include <string.h>
 
@@ -96,7 +100,9 @@ AVLTree * Insert(PAVLNode * X, AVLTree * T )
                     else
                         T = DoubleRotateWithRight( T );//右边左子树
             }
-
+            else{// already exist
+                return NULL;
+            }
             
             /* Else X is in the tree already; we'll do nothing */
             T->h = MAX( Height( T->l ), Height( T->r ) ) + 1;

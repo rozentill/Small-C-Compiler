@@ -9,6 +9,7 @@ This is a yacc file , it use grammer rule to construct a parse tree.I have modif
 #include <malloc.h>
 #include "treeNode.h"
 #include "CodeGeneration.c"
+#include "checkReserved.c"
 
 extern int yylineno;
 
@@ -66,15 +67,15 @@ spec    :TYPE{$$=newNode("spec",1,newNode("TYPE",1,newNode("int",0)));}
 	|stspec{$$=newNode("spec",1,$1);}
 	;
 stspec  :STRUCT opttag LC defs RC{$$=newNode("stspec",5,newNode("struct",0),$2,newNode("{",0),$4,newNode("}",0));}
-	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode($2,0));}
+	|STRUCT ID{$$=newNode("stspec",2,newNode("struct",0),newNode($2,0));checkWord($2);}
 	;
-opttag  :ID{$$=newNode("opttag",1,newNode($1,0));}
+opttag  :ID{$$=newNode("opttag",1,newNode($1,0));checkWord($1);}
 	|{$$=newNode("opttag",1,newNode("empty",0));}
 	;
-var 	:ID{$$=newNode("var",1,newNode($1,0));}
+var 	:ID{$$=newNode("var",1,newNode($1,0));checkWord($1);}
 	|var LB INT RB{$$=newNode("var",4,$1,newNode("[",0),newNode($3,0),newNode("]",0));}
 	;
-func    :ID LP paras RP{$$=newNode("func",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}//finished
+func    :ID LP paras RP{$$=newNode("func",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));checkWord($1);}
 	;
 paras   :para COMMA paras{$$=newNode("paras",3,$1,newNode(",",0),$3);}//finished
 	|para{$$=newNode("paras",1,$1);}//finished
@@ -130,9 +131,9 @@ exp	:exp BOP1 exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}
 	|UNARYOP exp{$$=newNode("exp",2,newNode($1,0),$2);}
 	|SUB exp %prec UMINUS{$$=newNode("exp",2,newNode($1,0),$2);}/*The unaryop "-" should be distinguished with binaryop "-"*/
 	|LP exp RP{$$=newNode("exp",3,newNode("(",0),$2,newNode(")",0));}
-	|ID LP args RP{$$=newNode("exp",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));}
-	|ID arrs{$$=newNode("exp",2,newNode($1,0),$2);}
-	|exp DOT ID{$$=newNode("exp",3,$1,newNode(".",0),newNode($3,0));}
+	|ID LP args RP{$$=newNode("exp",4,newNode($1,0),newNode("(",0),$3,newNode(")",0));checkWord($1);}
+	|ID arrs{$$=newNode("exp",2,newNode($1,0),$2);checkWord($1);}
+	|exp DOT ID{$$=newNode("exp",3,$1,newNode(".",0),newNode($3,0));checkWord($3);}
 	|INT{$$=newNode("exp",1,newNode($1,0));}
 	|exp ASSIGNOP exp{$$=newNode("exp",3,$1,newNode($2,0),$3);}/*This is added by me ,since it's necessary.*/
 	;

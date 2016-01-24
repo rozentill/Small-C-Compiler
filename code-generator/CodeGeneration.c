@@ -18,8 +18,10 @@ int ifNum;
 int forNum;
 int callNum;
 int arridxNum;
-int ifLoad = 1;
-int entry = 0;
+int ifLoad;
+int entry;
+int ifMain;
+int forLayer;
 
 AVLTree * symbolRoot;
 
@@ -36,12 +38,24 @@ void codeGen(Node * root,FILE * fout){
 	paraQueue->num = 0;
 	paraQueue->queue = (char **)malloc(sizeof(char *)*10);
 
+	//initialize flags
+	ifMain = 0;
+	ifLoad = 1;
+	entry = 0;
+	forLayer = 0;
+
 	printf("@.str = private unnamed_addr constant [3 x i8] c\"%%d\\00\", align 1\n");
 	printf("@.str1 = private unnamed_addr constant [2 x i8] c\"\\0A\\00\", align 1\n");
 	translate(root,paraQueue);
 	printf("declare i32 @__isoc99_scanf(i8*, ...) #2\ndeclare i32 @printf(i8*, ...) #2\n");
 	printf("attributes #0 = { nounwind uwtable \"less-precise-fpmad\"=\"false\" \"no-frame-pointer-elim\"=\"true\" \"no-frame-pointer-elim-non-leaf\" \"no-infs-fp-math\"=\"false\" \"no-nans-fp-math\"=\"false\" \"stack-protector-buffer-size\"=\"8\" \"unsafe-fp-math\"=\"false\" \"use-soft-float\"=\"false\" }");
 	
+	//check if there is a main function
+	if (!ifMain)
+	{
+		fprintf(stderr, "Error:your program does not have a main function.\n");
+	}
+
 	//free memory allocated
 	free(paraQueue->queue);
 	free(paraQueue);
@@ -83,6 +97,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							tmp->name = dec->children[0]->children[0]->data;
 							tmp->type='g';
 							symbolRoot=Insert(tmp,symbolRoot);
+							/****Error:if the variable exist****/
+							if (symbolRoot==NULL)
+							{
+								fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+								exit(-1);
+							}
 
 						}
 
@@ -97,6 +117,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							tmp->arrSize = atoi(num->data);
 							tmp->type='g';
 							symbolRoot=Insert(tmp,symbolRoot);
+							/****Error:if the variable exist****/
+							if (symbolRoot==NULL)
+							{
+								fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+								exit(-1);
+							}
 						}
 
 					}
@@ -114,6 +140,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							tmp->name = dec->children[0]->children[0]->data;
 							tmp->type='g';
 							symbolRoot=Insert(tmp,symbolRoot);
+							/****Error:if the variable exist****/
+							if (symbolRoot==NULL)
+							{
+								fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+								exit(-1);
+							}
 						}
 						else{//var:var LB INTEGER RB
 							Node * id = dec->children[0]->children[0]->children[0];
@@ -127,6 +159,13 @@ char * translate(Node * root,ParaQueue * paraQueue){
 							tmp->arrSize = atoi(num->data);
 							tmp->type='g';
 							symbolRoot=Insert(tmp,symbolRoot);
+
+							/****Error:if the variable exist****/
+							if (symbolRoot==NULL)
+							{
+								fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+								exit(-1);
+							}
 
 							//init : LC args RC
 							Node * args = init->children[1];
@@ -184,6 +223,13 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						tmp->strMem = strMem++;
 						symbolRoot=Insert(tmp,symbolRoot);
 
+						/****Error:if the variable exist****/
+						if (symbolRoot==NULL)
+						{
+							fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+							exit(-1);
+						}
+
 						if (defs->childrenNum==2)//defs:def defs
 						{
 							defs=defs->children[1];
@@ -222,6 +268,13 @@ char * translate(Node * root,ParaQueue * paraQueue){
 						tmp->strName = stspec->children[1]->data;
 						tmp->type='g';
 						symbolRoot=Insert(tmp,symbolRoot);
+
+						/****Error:if the variable exist****/
+						if (symbolRoot==NULL)
+						{
+							fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+							exit(-1);
+						}
 						
 						if (extvars->childrenNum==3) {
 							extvars = extvars->children[2];
@@ -240,6 +293,11 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	else if (!strcmp(root->data,"func")) {//func
 
 		printf("define i32 @%s(",root->children[0]->data);
+		//we have a main function
+		if (!strcmp(root->children[0]->data,"main"))
+		{
+			ifMain=1;
+		}
 		translate(root->children[2],paraQueue);//paras
 		printf(") #0 {\n");
 
@@ -267,6 +325,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 		tmp->name = root->children[1]->children[0]->data;
 		tmp->type='a';
 		symbolRoot=Insert(tmp,symbolRoot);
+		/****Error:if the variable exist****/
+		if (symbolRoot==NULL)
+		{
+			fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+			exit(-1);
+		}
 
 	}
 	else if (!strcmp(root->data,"funcstmtblock")) {//funcstmtblock:LC defs stmts RC
@@ -310,6 +374,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					tmp->type='l';
 					
 					symbolRoot=Insert(tmp,symbolRoot);
+					/****Error:if the variable exist****/
+					if (symbolRoot==NULL)
+					{
+						fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+						exit(-1);
+					}
 
 
 				}
@@ -324,6 +394,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					tmp->type='l';
 					tmp->arrSize = atoi(num->data);
 					symbolRoot=Insert(tmp,symbolRoot);
+					/****Error:if the variable exist****/
+					if (symbolRoot==NULL)
+					{
+						fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+						exit(-1);
+					}
 				}
 			}
 			else{//dec:var ASSIGNOP init
@@ -337,7 +413,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					tmp->name = dec->children[0]->children[0]->data;
 					tmp->type='l';
 					symbolRoot=Insert(tmp,symbolRoot);
-
+					/****Error:if the variable exist****/
+					if (symbolRoot==NULL)
+					{
+						fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+						exit(-1);
+					}
 				}
 				else{//var : var LB INT RB ***数组定义赋值***
 					Node * id = dec->children[0]->children[0]->children[0];
@@ -351,6 +432,12 @@ char * translate(Node * root,ParaQueue * paraQueue){
 					tmp->arrSize = atoi(num->data);
 					symbolRoot=Insert(tmp,symbolRoot);
 
+					/****Error:if the variable exist****/
+					if (symbolRoot==NULL)
+					{
+						fprintf(stderr, "Error:variable %s has already been declared\n",tmp->name);
+						exit(-1);
+					}
 
 					char * arrName = id->data;
 					int arrSize = tmp->arrSize;
@@ -512,7 +599,11 @@ char * translate(Node * root,ParaQueue * paraQueue){
 	      
 	        printf("for%d.body:\n",forNum);
 	        
+	        forLayer++;
+
 			translate(root->children[6],paraQueue);//stmt
+
+			forLayer--;
 
 	        printf("  br label %%for%d.inc\n",forNum);
 	        printf("for%d.inc:\n",forNum);
@@ -524,6 +615,19 @@ char * translate(Node * root,ParaQueue * paraQueue){
 
         	forNum++;
 		}
+		else if(!strcmp(root->children[0]->data,"break")){
+			if (forLayer==0)
+			{
+				fprintf(stderr, "Error:break sentece must be in the for loop.\n");
+			}
+		}
+		else if(!strcmp(root->children[0]->data,"continue")){
+			if (forLayer==0)
+			{
+				fprintf(stderr, "Error:continue sentece must be in the for loop.\n");
+			}
+		}
+
 		else if (!strcmp(root->children[0]->data,"write")) {//stmt:WRITE  LP exp RP SEMI
 			char* tmp = translate_exp(root->children[2]);
             int trans;
@@ -710,7 +814,7 @@ char * translate_exp(Node * root){
 			PAVLNode * tmpNode;
 			tmpNode = Find(tmp1,symbolRoot);
 			
-			/****Error:if not found****/
+			/****Error:if the variable is not found****/
 			if (tmpNode==NULL)
 			{
 				fprintf(stderr, "Error:variable %s has not been declared\n",tmp1);
