@@ -1,4 +1,5 @@
 # Small-C-Compiler
+The main idea and work explanation can be found in report.pdf. 
 <p>All the files contain:Small.l,Small.y,treeNode.h,README.md,makefile,testcases,CodeGeneration.c,avlTree.h,checkReserved.c</p>
 ## How to run :
 <p>Firstly,input "sh build.sh" in the root directory.</p>
